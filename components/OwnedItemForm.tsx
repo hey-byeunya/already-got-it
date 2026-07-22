@@ -1,7 +1,11 @@
+'use client'
+
+import { useState } from 'react'
 import { OWNED_ITEM_STATUSES, type OwnedItem } from '@/types/owned-item'
+import PendingOverlay from '@/components/PendingOverlay'
 
 const inputClass =
-  'rounded-md border border-black/10 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/30 dark:border-white/15 dark:focus:border-white/30'
+  'rounded-xl border border-surface-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent'
 
 interface OwnedItemFormProps {
   item?: OwnedItem
@@ -11,9 +15,21 @@ interface OwnedItemFormProps {
 
 export default function OwnedItemForm({ item, action, submitLabel }: OwnedItemFormProps) {
   const today = new Date().toISOString().slice(0, 10)
+  const [quantity, setQuantity] = useState(item?.quantity ?? 1)
+
+  function clamp(value: number) {
+    if (!Number.isFinite(value) || value < 1) return 1
+    return Math.floor(value)
+  }
+
+  function handleQuantityChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setQuantity(clamp(e.target.valueAsNumber))
+  }
 
   return (
-    <form action={action} className="flex flex-col gap-3">
+    <form action={action} className="relative flex animate-fade-in flex-col gap-3">
+      <PendingOverlay />
+
       <label className="flex flex-col gap-1 text-sm">
         이름
         <input
@@ -38,15 +54,36 @@ export default function OwnedItemForm({ item, action, submitLabel }: OwnedItemFo
 
       <label className="flex flex-col gap-1 text-sm">
         수량
-        <input
-          name="quantity"
-          type="number"
-          min={1}
-          step={1}
-          required
-          defaultValue={item?.quantity ?? 1}
-          className={inputClass}
-        />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => clamp(q - 1))}
+            disabled={quantity <= 1}
+            aria-label="수량 감소"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-surface-border text-lg font-medium text-foreground transition-colors hover:bg-accent-soft disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+          >
+            −
+          </button>
+          <input
+            name="quantity"
+            type="number"
+            min={1}
+            step={1}
+            required
+            value={quantity}
+            onChange={handleQuantityChange}
+            onBlur={() => setQuantity((q) => clamp(q))}
+            className={`w-16 text-center ${inputClass}`}
+          />
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => clamp(q + 1))}
+            aria-label="수량 증가"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-surface-border text-lg font-medium text-foreground transition-colors hover:bg-accent-soft"
+          >
+            +
+          </button>
+        </div>
       </label>
 
       <label className="flex flex-col gap-1 text-sm">
@@ -93,7 +130,7 @@ export default function OwnedItemForm({ item, action, submitLabel }: OwnedItemFo
 
       <button
         type="submit"
-        className="mt-2 rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:opacity-90 dark:bg-white dark:text-black"
+        className="mt-2 rounded-xl bg-accent px-3 py-2.5 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover"
       >
         {submitLabel}
       </button>

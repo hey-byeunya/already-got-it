@@ -35,7 +35,7 @@ export default function OwnedItemsExplorer({ items, onStatusChange }: OwnedItems
   }, [items, search, category])
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-medium tracking-wide text-muted">MY SHELF</p>

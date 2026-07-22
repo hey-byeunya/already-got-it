@@ -1,5 +1,7 @@
+import PendingOverlay from '@/components/PendingOverlay'
+
 const inputClass =
-  'rounded-md border border-black/10 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/30 dark:border-white/15 dark:focus:border-white/30'
+  'rounded-xl border border-surface-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent'
 
 export default function WishlistItemForm({
   action,
@@ -7,7 +9,9 @@ export default function WishlistItemForm({
   action: (formData: FormData) => void | Promise<void>
 }) {
   return (
-    <form action={action} className="flex flex-col gap-3">
+    <form action={action} className="relative flex animate-fade-in flex-col gap-3">
+      <PendingOverlay />
+
       <label className="flex flex-col gap-1 text-sm">
         이름
         <input name="name" type="text" required className={inputClass} />
@@ -25,7 +29,7 @@ export default function WishlistItemForm({
 
       <button
         type="submit"
-        className="mt-2 rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:opacity-90 dark:bg-white dark:text-black"
+        className="mt-2 rounded-xl bg-accent px-3 py-2.5 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover"
       >
         위시에 담기
       </button>

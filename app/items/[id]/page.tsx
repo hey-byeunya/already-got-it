@@ -1,6 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import OwnedItemForm from '@/components/OwnedItemForm'
+import PendingOverlay from '@/components/PendingOverlay'
 import type { OwnedItem } from '@/types/owned-item'
 import { updateOwnedItem, deleteOwnedItem } from './actions'
 
@@ -30,13 +31,14 @@ export default async function EditOwnedItemPage({
   const boundDelete = deleteOwnedItem.bind(null, id)
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex animate-fade-in flex-col gap-4">
       <h1 className="text-lg font-semibold">있템 수정</h1>
       <OwnedItemForm item={item} action={boundUpdate} submitLabel="저장" />
-      <form action={boundDelete}>
+      <form action={boundDelete} className="relative">
+        <PendingOverlay label="삭제하는 중..." />
         <button
           type="submit"
-          className="w-full rounded-md border border-red-200 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
+          className="w-full rounded-xl border border-dday-overdue/40 px-3 py-2 text-sm font-medium text-dday-overdue transition-colors hover:bg-dday-overdue-bg"
         >
           삭제
         </button>

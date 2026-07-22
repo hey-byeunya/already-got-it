@@ -24,7 +24,7 @@ export default async function WishlistPage({
   const items = (data ?? []) as WishlistItem[]
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-medium tracking-wide text-muted">WISH LIST</p>

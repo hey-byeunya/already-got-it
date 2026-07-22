@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { signIn, signUp } from '@/app/login/actions'
 
 type Mode = 'signin' | 'signup'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const REMEMBERED_EMAIL_KEY = 'already-got-it:remembered-email'
 
 const inputClass =
   'rounded-xl border border-surface-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent'
@@ -13,6 +14,19 @@ const inputClass =
 export default function AuthForm({ initialError }: { initialError?: string }) {
   const [mode, setMode] = useState<Mode>('signin')
   const [error, setError] = useState<string | null>(initialError ?? null)
+  const [rememberEmail, setRememberEmail] = useState(false)
+  const [rememberedEmail, setRememberedEmail] = useState('')
+
+  useEffect(() => {
+    // localStorage는 서버 렌더링 시점에 없으므로, 하이드레이션 불일치를 피하려면
+    // 마운트 후 이 effect에서만 읽어와 반영해야 한다 (렌더 중 파생 불가).
+    const saved = window.localStorage.getItem(REMEMBERED_EMAIL_KEY)
+    if (saved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setRememberedEmail(saved)
+      setRememberEmail(true)
+    }
+  }, [])
 
   function switchMode(next: Mode) {
     setMode(next)
@@ -47,6 +61,15 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
         return
       }
     }
+
+    if (mode === 'signin') {
+      if (rememberEmail) {
+        window.localStorage.setItem(REMEMBERED_EMAIL_KEY, email)
+      } else {
+        window.localStorage.removeItem(REMEMBERED_EMAIL_KEY)
+      }
+    }
+
     setError(null)
   }
 
@@ -87,7 +110,14 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
         onChange={() => setError(null)}
         className="flex flex-col gap-3"
       >
-        <input name="email" type="email" required placeholder="이메일" className={inputClass} />
+        <input
+          name="email"
+          type="email"
+          required
+          placeholder="이메일"
+          defaultValue={mode === 'signin' ? rememberedEmail : undefined}
+          className={inputClass}
+        />
         <input
           name="password"
           type="password"
@@ -105,6 +135,17 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
             placeholder="비밀번호 확인"
             className={inputClass}
           />
+        )}
+        {mode === 'signin' && (
+          <label className="flex items-center gap-2 text-sm text-muted">
+            <input
+              type="checkbox"
+              checked={rememberEmail}
+              onChange={(e) => setRememberEmail(e.target.checked)}
+              className="h-4 w-4 rounded border-surface-border accent-accent"
+            />
+            이메일 저장
+          </label>
         )}
         <button
           type="submit"
