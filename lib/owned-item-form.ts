@@ -1,4 +1,6 @@
 import { OWNED_ITEM_STATUSES, type OwnedItemStatus } from '@/types/owned-item'
+import { deriveUsedUpAt } from '@/lib/owned-item-status'
+import { todayDateString } from '@/lib/inventory'
 
 export interface OwnedItemFormValues {
   name: string
@@ -8,6 +10,7 @@ export interface OwnedItemFormValues {
   expiry_date: string | null
   memo: string | null
   status: OwnedItemStatus
+  used_up_at: string | null
 }
 
 export function parseOwnedItemFormData(formData: FormData): OwnedItemFormValues {
@@ -32,6 +35,8 @@ export function parseOwnedItemFormData(formData: FormData): OwnedItemFormValues 
     throw new Error('상태 값이 올바르지 않아요')
   }
 
+  const status = statusRaw as OwnedItemStatus
+
   return {
     name,
     category,
@@ -39,6 +44,8 @@ export function parseOwnedItemFormData(formData: FormData): OwnedItemFormValues 
     purchased_at,
     expiry_date: expiryRaw || null,
     memo: memoRaw || null,
-    status: statusRaw as OwnedItemStatus,
+    status,
+    // 폼(등록/수정)에서 직접 상태를 "다 씀"으로 설정하는 경우에도 스테퍼와 동일한 규칙을 적용한다.
+    used_up_at: deriveUsedUpAt(status, todayDateString()),
   }
 }

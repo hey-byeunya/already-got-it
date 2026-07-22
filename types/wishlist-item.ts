@@ -4,6 +4,7 @@ export interface WishlistItem {
   name: string
   category: string | null
   memo: string | null
+  link: string | null
   created_at: string
   updated_at: string
 }

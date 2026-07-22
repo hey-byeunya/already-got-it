@@ -15,6 +15,7 @@ interface OwnedItemsExplorerProps {
 export default function OwnedItemsExplorer({ items, onStatusChange }: OwnedItemsExplorerProps) {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('전체')
+  const [includeUsedUp, setIncludeUsedUp] = useState(false)
 
   const categories = useMemo(
     () =>
@@ -48,13 +49,23 @@ export default function OwnedItemsExplorer({ items, onStatusChange }: OwnedItems
           + 추가
         </Link>
       </div>
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <div className="flex-1">
-          <SearchBar value={search} onChange={setSearch} placeholder="이름·카테고리로 검색" />
-        </div>
-        <CategoryFilter categories={categories} value={category} onChange={setCategory} />
-      </div>
-      <OwnedItemList items={filtered} onStatusChange={onStatusChange} />
+      <SearchBar value={search} onChange={setSearch} placeholder="이름·카테고리로 검색" />
+      <CategoryFilter categories={categories} value={category} onChange={setCategory} />
+      <label className="flex items-center gap-1.5 self-start text-sm text-muted">
+        <input
+          type="checkbox"
+          checked={includeUsedUp}
+          onChange={(e) => setIncludeUsedUp(e.target.checked)}
+          className="h-4 w-4 rounded border-surface-border accent-accent"
+        />
+        다 쓴 것도 보기
+      </label>
+      <OwnedItemList
+        items={filtered}
+        hasAnyItems={items.length > 0}
+        includeUsedUp={includeUsedUp}
+        onStatusChange={onStatusChange}
+      />
     </div>
   )
 }

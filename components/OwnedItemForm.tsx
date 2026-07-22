@@ -1,21 +1,25 @@
 'use client'
 
 import { useState } from 'react'
-import { OWNED_ITEM_STATUSES, type OwnedItem } from '@/types/owned-item'
+import type { OwnedItem, OwnedItemStatus } from '@/types/owned-item'
 import PendingOverlay from '@/components/PendingOverlay'
+import CategoryPicker from '@/components/CategoryPicker'
+import { StatusSegmentedControl } from '@/components/StatusStepper'
 
 const inputClass =
   'rounded-xl border border-surface-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent'
 
 interface OwnedItemFormProps {
   item?: OwnedItem
+  existingCategories: string[]
   action: (formData: FormData) => void | Promise<void>
   submitLabel: string
 }
 
-export default function OwnedItemForm({ item, action, submitLabel }: OwnedItemFormProps) {
+export default function OwnedItemForm({ item, existingCategories, action, submitLabel }: OwnedItemFormProps) {
   const today = new Date().toISOString().slice(0, 10)
   const [quantity, setQuantity] = useState(item?.quantity ?? 1)
+  const [status, setStatus] = useState<OwnedItemStatus>(item?.status ?? '미개봉')
 
   function clamp(value: number) {
     if (!Number.isFinite(value) || value < 1) return 1
@@ -41,16 +45,10 @@ export default function OwnedItemForm({ item, action, submitLabel }: OwnedItemFo
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <div className="flex flex-col gap-1 text-sm">
         카테고리
-        <input
-          name="category"
-          type="text"
-          required
-          defaultValue={item?.category ?? ''}
-          className={inputClass}
-        />
-      </label>
+        <CategoryPicker existingCategories={existingCategories} defaultValue={item?.category} />
+      </div>
 
       <label className="flex flex-col gap-1 text-sm">
         수량
@@ -117,16 +115,11 @@ export default function OwnedItemForm({ item, action, submitLabel }: OwnedItemFo
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <div className="flex flex-col gap-1 text-sm">
         상태
-        <select name="status" defaultValue={item?.status ?? '미개봉'} className={inputClass}>
-          {OWNED_ITEM_STATUSES.map((status) => (
-            <option key={status} value={status}>
-              {status}
-            </option>
-          ))}
-        </select>
-      </label>
+        <input type="hidden" name="status" value={status} />
+        <StatusSegmentedControl status={status} onChange={setStatus} />
+      </div>
 
       <button
         type="submit"

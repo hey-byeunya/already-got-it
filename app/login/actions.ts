@@ -47,13 +47,22 @@ export async function signUp(formData: FormData) {
   const email = String(formData.get('email') ?? '')
   const password = String(formData.get('password') ?? '')
   const confirmPassword = String(formData.get('confirmPassword') ?? '')
+  const nickname = String(formData.get('nickname') ?? '').trim()
+  const agreedToTerms = formData.get('agreedToTerms') === 'on'
+
   if (!email || !password) redirect(encodeError('이메일과 비밀번호를 입력해 주세요'))
   if (!EMAIL_PATTERN.test(email)) redirect(encodeError('올바른 이메일 형식이 아니에요'))
   if (password.length < 6) redirect(encodeError('비밀번호는 6자 이상이어야 해요'))
   if (password !== confirmPassword) redirect(encodeError('비밀번호가 서로 일치하지 않아요'))
+  if (nickname.length < 2 || nickname.length > 20) redirect(encodeError('닉네임은 2~20자로 입력해 주세요'))
+  if (!agreedToTerms) redirect(encodeError('이용약관 및 개인정보 처리방침에 동의해 주세요'))
 
   const supabase = await createClient()
-  const { error } = await supabase.auth.signUp({ email, password })
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { nickname } },
+  })
   if (error) redirect(encodeError(translateAuthError(error)))
 
   redirect('/')

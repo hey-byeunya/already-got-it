@@ -1,4 +1,4 @@
-import { PouchIcon } from '@/components/icons'
+import Image from 'next/image'
 import AuthForm from '@/components/AuthForm'
 
 export default async function LoginPage({
@@ -11,8 +11,8 @@ export default async function LoginPage({
   return (
     <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-8 px-4 py-12">
       <div>
-        <span className="flex items-center gap-1.5 font-semibold tracking-tight text-accent">
-          <PouchIcon className="h-5 w-5" />
+        <span className="flex items-center gap-1.5 font-extrabold tracking-tight text-accent">
+          <Image src="/logo.png" alt="" width={22} height={22} className="rounded-sm" />
           이미 있어
         </span>
         <p className="mt-4 text-lg font-semibold tracking-tight text-accent">

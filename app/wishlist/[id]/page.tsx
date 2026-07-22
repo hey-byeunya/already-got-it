@@ -1,13 +1,14 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import OwnedItemForm from '@/components/OwnedItemForm'
+import WishlistItemForm from '@/components/WishlistItemForm'
 import PendingOverlay from '@/components/PendingOverlay'
 import { BackIcon } from '@/components/icons'
-import type { OwnedItem } from '@/types/owned-item'
-import { updateOwnedItem, deleteOwnedItem } from './actions'
+import type { WishlistItem } from '@/types/wishlist-item'
+import { deleteWishlistItem } from '../actions'
+import { updateWishlistItem } from './actions'
 
-export default async function EditOwnedItemPage({
+export default async function EditWishlistItemPage({
   params,
 }: {
   params: Promise<{ id: string }>
@@ -21,29 +22,29 @@ export default async function EditOwnedItemPage({
   if (!user) redirect('/login')
 
   const [{ data: item, error }, { data: categories, error: categoriesError }] = await Promise.all([
-    supabase.from('owned_items').select('*').eq('id', id).eq('user_id', user.id).single<OwnedItem>(),
-    supabase.rpc('list_owned_categories'),
+    supabase.from('wishlist_items').select('*').eq('id', id).eq('user_id', user.id).single<WishlistItem>(),
+    supabase.rpc('list_wishlist_categories'),
   ])
 
   if (error || !item) notFound()
   if (categoriesError) throw new Error(categoriesError.message)
 
-  const boundUpdate = updateOwnedItem.bind(null, id)
-  const boundDelete = deleteOwnedItem.bind(null, id)
+  const boundUpdate = updateWishlistItem.bind(null, id)
+  const boundDelete = deleteWishlistItem.bind(null, id)
 
   return (
     <div className="flex animate-fade-in flex-col gap-4">
       <div className="flex items-center gap-3">
         <Link
-          href="/"
-          aria-label="있템 목록으로"
+          href="/wishlist"
+          aria-label="위시 목록으로"
           className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-foreground transition-colors hover:text-accent"
         >
           <BackIcon className="h-4 w-4" />
         </Link>
-        <h1 className="text-lg font-semibold">있템 수정</h1>
+        <h1 className="text-lg font-semibold">위시 수정</h1>
       </div>
-      <OwnedItemForm
+      <WishlistItemForm
         item={item}
         existingCategories={(categories ?? []) as string[]}
         action={boundUpdate}

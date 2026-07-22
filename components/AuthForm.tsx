@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useState, type FormEvent } from 'react'
+import Link from 'next/link'
 import { signIn, signUp } from '@/app/login/actions'
+import { REMEMBERED_EMAIL_KEY } from '@/lib/client-session'
 
 type Mode = 'signin' | 'signup'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const REMEMBERED_EMAIL_KEY = 'already-got-it:remembered-email'
 
 const inputClass =
   'rounded-xl border border-surface-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent'
@@ -16,6 +17,7 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
   const [error, setError] = useState<string | null>(initialError ?? null)
   const [rememberEmail, setRememberEmail] = useState(false)
   const [rememberedEmail, setRememberedEmail] = useState('')
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
 
   useEffect(() => {
     // localStorage는 서버 렌더링 시점에 없으므로, 하이드레이션 불일치를 피하려면
@@ -54,10 +56,21 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
       return
     }
     if (mode === 'signup') {
+      const nickname = String(formData.get('nickname') ?? '').trim()
       const confirmPassword = String(formData.get('confirmPassword') ?? '')
+      if (nickname.length < 2 || nickname.length > 20) {
+        e.preventDefault()
+        setError('닉네임은 2~20자로 입력해 주세요')
+        return
+      }
       if (password !== confirmPassword) {
         e.preventDefault()
         setError('비밀번호가 서로 일치하지 않아요')
+        return
+      }
+      if (!agreedToTerms) {
+        e.preventDefault()
+        setError('이용약관 및 개인정보 처리방침에 동의해 주세요')
         return
       }
     }
@@ -110,6 +123,9 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
         onChange={() => setError(null)}
         className="flex flex-col gap-3"
       >
+        {mode === 'signup' && (
+          <input name="nickname" type="text" required placeholder="닉네임" className={inputClass} />
+        )}
         <input
           name="email"
           type="email"
@@ -137,14 +153,34 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
           />
         )}
         {mode === 'signin' && (
-          <label className="flex items-center gap-2 text-sm text-muted">
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 text-sm text-muted">
+              <input
+                type="checkbox"
+                checked={rememberEmail}
+                onChange={(e) => setRememberEmail(e.target.checked)}
+                className="h-4 w-4 rounded border-surface-border accent-accent"
+              />
+              이메일 저장
+            </label>
+            <Link href="/forgot-password" className="text-sm text-muted hover:text-accent">
+              비밀번호를 잊으셨나요?
+            </Link>
+          </div>
+        )}
+        {mode === 'signup' && (
+          <label className="flex items-start gap-2 text-sm text-muted">
             <input
               type="checkbox"
-              checked={rememberEmail}
-              onChange={(e) => setRememberEmail(e.target.checked)}
-              className="h-4 w-4 rounded border-surface-border accent-accent"
+              name="agreedToTerms"
+              checked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-surface-border accent-accent"
             />
-            이메일 저장
+            <span>
+              <span className="font-medium text-foreground">이용약관</span> 및{' '}
+              <span className="font-medium text-foreground">개인정보 처리방침</span>에 동의합니다
+            </span>
           </label>
         )}
         <button

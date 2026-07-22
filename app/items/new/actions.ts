@@ -9,7 +9,7 @@ export async function createOwnedItem(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  if (!user) redirect('/login')
 
   const values = parseOwnedItemFormData(formData)
 

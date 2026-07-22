@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import type { WishlistItem } from '@/types/wishlist-item'
+import { GiftIcon, PlusIcon } from '@/components/icons'
 import WishlistItemCard from './WishlistItemCard'
 
 interface WishlistItemListProps {
@@ -36,9 +38,24 @@ export default function WishlistItemList({ items: itemsProp, markPurchased, dele
 
   if (items.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-surface-border py-10 text-center text-sm text-muted">
-        위시가 비어 있어요.
-      </p>
+      <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-surface-border px-6 py-14 text-center">
+        <span className="mb-1 flex h-20 w-20 items-center justify-center rounded-full bg-accent-soft text-muted">
+          <GiftIcon className="h-9 w-9" />
+        </span>
+        <p className="text-lg font-extrabold">위시리스트가 비었어요</p>
+        <p className="text-sm leading-relaxed text-muted">
+          사고 싶은 걸 담아두고
+          <br />
+          정말 필요한지 천천히 생각해봐요.
+        </p>
+        <Link
+          href="/wishlist/new"
+          className="mt-2 flex items-center gap-1.5 rounded-2xl bg-accent px-5 py-3 text-sm font-extrabold text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover"
+        >
+          <PlusIcon className="h-4 w-4" />
+          위시 담기
+        </Link>
+      </div>
     )
   }
 
