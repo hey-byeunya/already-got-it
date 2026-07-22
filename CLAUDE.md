@@ -53,6 +53,13 @@
 - `owned_items.quantity`: 필수, 미입력 시 기본값 1, 1 이상 정수만 허용 (0 이하·소수는 거부)
 - `owned_items.status`: 미개봉/사용중/다 씀 외의 값은 거부
 
+### UI/UX 컨벤션
+- 로딩 표시: 목록 화면(라우트 단위 데이터 조회)은 `app/**/loading.tsx`(Next.js 라우트 로딩)로, 폼 제출 중 상태는 `components/PendingOverlay.tsx`(`useFormStatus` 기반, `<form>` 안에 렌더링해야 함)로 표시한다. 둘 다 `components/CenteredSpinner.tsx`를 재사용한다.
+- 화면 전환: 새로 마운트되는 화면 콘텐츠에는 `animate-fade-in` 클래스(`app/globals.css`에 정의)를 붙여 급격한 전환을 완화한다.
+- 성공 확인 후에만 UI를 바꾸는 애니메이션(낙관적 업데이트 금지): 서버 액션을 `<form action={...}>`에 직접 넘기지 않고, 클라이언트 쪽 래퍼 함수 안에서 `await`한 뒤 예외 없이 끝난 경우에만 애니메이션 상태를 켠다. 실패(에러로 인한 `redirect` 등)는 그대로 전파시켜 기존 에러 처리가 그대로 동작하게 둔다 — `components/WishlistItemCard.tsx`의 "구매" 버튼이 이 패턴의 예시.
+- 폼 스타일: 공통 `inputClass`(`rounded-xl border-surface-border bg-surface ... focus:border-accent`) 패턴을 새 폼에도 동일하게 적용한다.
+- 이메일 저장(로그인 화면): `localStorage` 키 `already-got-it:remembered-email`에 이메일만 저장한다. **비밀번호는 절대 저장하지 않는다.**
+
 ### 비밀값 관리
 - Supabase URL과 **anon public key**만 클라이언트에 노출한다 (`NEXT_PUBLIC_*` 접두사, `.env.local`).
 - **service role key는 절대 사용하지도, 커밋하지도 않는다.**
