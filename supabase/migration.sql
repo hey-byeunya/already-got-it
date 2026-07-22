@@ -12,9 +12,13 @@ create table if not exists public.owned_items (
   expiry_date date,
   memo text,
   status text not null default '미개봉' check (status in ('미개봉', '사용중', '다 씀')),
+  used_up_at date,                     -- '다 씀' 상태로 바뀐 날짜. 그 외 상태에서는 항상 null.
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- 이미 배포된 프로젝트에 이 파일을 재실행할 때 used_up_at 컬럼만 추가로 반영되도록 idempotent하게 처리.
+alter table public.owned_items add column if not exists used_up_at date;
 
 create index if not exists owned_items_expiry_date_idx on public.owned_items (expiry_date);
 create index if not exists owned_items_user_search_idx on public.owned_items (user_id, name, category);
@@ -44,9 +48,13 @@ create table if not exists public.wishlist_items (
   name text not null,
   category text,
   memo text,
+  link text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- 이미 배포된 프로젝트에 이 파일을 재실행할 때 link 컬럼만 추가로 반영되도록 idempotent하게 처리.
+alter table public.wishlist_items add column if not exists link text;
 
 create index if not exists wishlist_items_user_search_idx on public.wishlist_items (user_id, name, category);
 
@@ -64,15 +72,15 @@ drop policy if exists "wishlist_items_delete_own" on public.wishlist_items;
 create policy "wishlist_items_delete_own" on public.wishlist_items
   for delete using (auth.uid() = user_id);
 
--- "수정(update)" 기능 자체는 스펙에 없지만, mark_wishlist_purchased가 동시 재요청 방어를 위해
--- select ... for update로 행을 잠근다. Postgres RLS는 FOR UPDATE 시 SELECT 정책과 함께
--- UPDATE 정책도 만족해야 행을 반환하므로, 이 정책이 없으면 모든 잠금 조회가 0건을 반환해
--- "이미 처리되었거나 존재하지 않는 항목"으로 오판된다. 실제 update 문은 여기서 실행하지 않는다.
+-- 위시 수정(이름/카테고리/메모/링크) 화면이 실제로 update 문을 실행하는 데 필요할 뿐 아니라,
+-- mark_wishlist_purchased가 동시 재요청 방어를 위해 select ... for update로 행을 잠글 때도
+-- 필요하다 (Postgres RLS는 FOR UPDATE 시 SELECT 정책과 함께 UPDATE 정책도 만족해야 행을
+-- 반환하므로, 이 정책이 없으면 잠금 조회가 0건을 반환해 "이미 처리된 항목"으로 오판된다).
 drop policy if exists "wishlist_items_update_own" on public.wishlist_items;
 create policy "wishlist_items_update_own" on public.wishlist_items
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
--- 3. updated_at 자동 갱신 트리거 (owned_items만 — wishlist는 수정 경로가 없음) --
+-- 3. updated_at 자동 갱신 트리거 --
 create or replace function public.set_updated_at()
 returns trigger as $$
 begin
@@ -84,6 +92,11 @@ $$ language plpgsql;
 drop trigger if exists owned_items_set_updated_at on public.owned_items;
 create trigger owned_items_set_updated_at
   before update on public.owned_items
+  for each row execute function public.set_updated_at();
+
+drop trigger if exists wishlist_items_set_updated_at on public.wishlist_items;
+create trigger wishlist_items_set_updated_at
+  before update on public.wishlist_items
   for each row execute function public.set_updated_at();
 
 -- 4. mark_wishlist_purchased: 원자적 delete+insert RPC ------------------------
@@ -150,3 +163,25 @@ $$;
 
 grant execute on function public.list_owned_items(text) to authenticated;
 grant execute on function public.list_wishlist_items(text) to authenticated;
+
+-- 6. 카테고리 칩 선택 UI용: 호출자가 이미 사용한 카테고리 목록(중복 제거, 정렬) ------
+create or replace function public.list_owned_categories()
+returns setof text
+language sql security invoker stable set search_path = public
+as $$
+  select distinct category from public.owned_items
+  where user_id = auth.uid() and category is not null
+  order by category;
+$$;
+
+create or replace function public.list_wishlist_categories()
+returns setof text
+language sql security invoker stable set search_path = public
+as $$
+  select distinct category from public.wishlist_items
+  where user_id = auth.uid() and category is not null
+  order by category;
+$$;
+
+grant execute on function public.list_owned_categories() to authenticated;
+grant execute on function public.list_wishlist_categories() to authenticated;

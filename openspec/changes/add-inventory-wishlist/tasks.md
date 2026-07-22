@@ -53,3 +53,16 @@
 - [x] 8.3 목록/폼 화면 로딩 중 중앙 스피너 표시(`loading.tsx` + `PendingOverlay`) 및 콘텐츠 fade-in
 - [x] 8.4 위시 구매 성공 시에만(실패 시 애니메이션 없음) 카드 fade-out + 높이 축소 애니메이션
 - [x] 8.5 보유템 수량 입력을 −/+ 스테퍼로 변경, 최소값 1 보정
+
+## 9. Claude Design 리디자인 (후속 라운드)
+
+- [x] 9.1 Claude Design 목업(`이미 있어 리디자인.dc.html`) 에셋(로고) 다운로드, 디자인 토큰(틸 그린 #00a090)·Pretendard 폰트 교체
+- [x] 9.2 Header를 프로필 아바타 + 드롭다운(닉네임/이메일 표시, 로그아웃) 구조로 개편
+- [x] 9.3 회원가입에 닉네임(2~20자 검증)·약관동의 체크박스 추가, `signUp` 시 `user_metadata.nickname` 저장
+- [x] 9.4 비밀번호 찾기 플로우 신설: `/forgot-password`(재설정 메일 요청) → `/reset-password`(새 비밀번호 설정), `proxy.ts`에 비로그인 허용 경로로 등록
+- [x] 9.5 `list_owned_categories`/`list_wishlist_categories` RPC 신설, 보유템/위시 등록·수정 폼과 목록 필터의 카테고리 입력을 칩 선택 UI(`CategoryPicker`/`CategoryFilter`)로 전환
+- [x] 9.6 보유템 상태 입력·표시를 3단계 세그먼트 스텝퍼(`StatusStepper`/`StatusSegmentedControl`)로 전환
+- [x] 9.7 `wishlist_items.link` 컬럼 추가, 등록/수정 폼에 참고 링크 입력 추가, 위시리스트 항목 수정 화면(`/wishlist/[id]`) 신설(등록 폼과 동일한 소유권 검증 패턴 재사용)
+- [x] 9.8 목록 빈 상태를 아이콘 + 헤드라인 + 설명 + CTA 버튼 형태로 재작성 (보유템/위시 각각 `/items/new`, `/wishlist/new`로 연결)
+- [x] 9.9 `openspec validate add-inventory-wishlist --strict` 통과 확인, `PRD.md`/`CLAUDE.md`에 신규 기능·컨벤션 반영
+- [x] 9.10 `npx tsc --noEmit` + `npx eslint .` 전체 통과 확인, 비로그인 미리보기 화면(`/preview`, `/preview/wishlist`) 브라우저 검증 — 닉네임 가입/비밀번호 찾기/위시 수정/프로필 메뉴 등 로그인 필요 화면은 비밀번호 대리 입력이 불가능하므로 사용자 직접 확인 필요

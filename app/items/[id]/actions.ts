@@ -10,7 +10,7 @@ export async function updateOwnedItem(itemId: string, formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  if (!user) redirect('/login')
 
   const values = parseOwnedItemFormData(formData)
 
@@ -33,7 +33,7 @@ export async function deleteOwnedItem(itemId: string) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  if (!user) redirect('/login')
 
   const { data, error } = await supabase
     .from('owned_items')

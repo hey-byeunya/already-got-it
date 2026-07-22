@@ -12,6 +12,7 @@ const EXAMPLE_WISHLIST_ITEMS: WishlistItem[] = [
     name: '립밤 신상',
     category: null,
     memo: '친구가 추천함',
+    link: null,
     created_at: '2026-07-20T00:00:00Z',
     updated_at: '2026-07-20T00:00:00Z',
   },

@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import type { WishlistItem } from '@/types/wishlist-item'
-import { CalendarIcon, CheckIcon, TrashIcon } from '@/components/icons'
+import { CalendarIcon, CheckIcon, LinkIcon, TrashIcon } from '@/components/icons'
 import FormSubmitButton from '@/components/FormSubmitButton'
 
 interface WishlistItemCardProps {
@@ -42,16 +43,30 @@ export default function WishlistItemCard({
       <div className="flex min-h-0 items-stretch overflow-hidden">
         <span className="w-1.5 shrink-0 bg-accent-soft" aria-hidden />
         <div className="flex flex-1 flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
+          <Link href={`/wishlist/${item.id}`} className="min-w-0 flex-1">
             <p className="truncate font-medium">{item.name}</p>
             {item.memo && (
               <p className="mt-0.5 break-words text-sm italic text-muted">&ldquo;{item.memo}&rdquo;</p>
             )}
-            <span className="mt-1.5 inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-dday-normal-bg px-2 py-0.5 text-xs text-dday-normal">
-              <CalendarIcon className="h-3 w-3 shrink-0" />
-              담은 날짜 {item.created_at.slice(0, 10)}
-            </span>
-          </div>
+            <div className="mt-1.5 flex items-center gap-2.5">
+              <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-dday-normal-bg px-2 py-0.5 text-xs text-dday-normal">
+                <CalendarIcon className="h-3 w-3 shrink-0" />
+                담은 날짜 {item.created_at.slice(0, 10)}
+              </span>
+              {item.link && (
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="상품 링크 열기"
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-accent hover:text-accent-hover"
+                >
+                  <LinkIcon className="h-3.5 w-3.5" />
+                </a>
+              )}
+            </div>
+          </Link>
           <div className="flex shrink-0 items-center justify-end gap-1.5">
             <form action={onDelete}>
               <FormSubmitButton

@@ -1,30 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f1e7;
-  --foreground: #2a241d;
-  --surface: #fffbf3;
-  --surface-border: #e7dcc6;
-  --muted: #8a7d68;
+  --background: #eef1f0;
+  --foreground: #1b1b1b;
+  --surface: #ffffff;
+  --surface-border: #e8ebea;
+  --muted: #8a918f;
 
-  --accent: #bd4f2a;
-  --accent-hover: #a5411f;
-  --accent-foreground: #fff7f0;
-  --accent-soft: #f3ddc9;
+  --accent: #00a090;
+  --accent-hover: #007a6c;
+  --accent-foreground: #ffffff;
+  --accent-soft: #e6f5f2;
 
-  --status-sealed: #2f6690;
-  --status-sealed-bg: #e1ebf1;
-  --status-active: #4f7a34;
-  --status-active-bg: #e6efdc;
-  --status-done: #8f7f68;
-  --status-done-bg: #ece4d4;
+  --status-sealed: #3b6fa0;
+  --status-sealed-bg: #e7eef5;
+  --status-active: #00a090;
+  --status-active-bg: #e6f5f2;
+  --status-done: #8a918f;
+  --status-done-bg: #eceeed;
 
-  --dday-overdue: #a8331f;
-  --dday-overdue-bg: #f5dcd3;
-  --dday-urgent: #a8631a;
-  --dday-urgent-bg: #f5e3c8;
-  --dday-normal: #5b5140;
-  --dday-normal-bg: #ece4d4;
+  --dday-overdue: #d1544f;
+  --dday-overdue-bg: #fbe4e3;
+  --dday-urgent: #b8790f;
+  --dday-urgent-bg: #f7ecd7;
+  --dday-normal: #6b726f;
+  --dday-normal-bg: #eceeed;
 }
 
 @theme inline {
@@ -53,46 +53,42 @@
   --color-dday-normal: var(--dday-normal);
   --color-dday-normal-bg: var(--dday-normal-bg);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1c1712;
-    --foreground: #f1e9da;
-    --surface: #262019;
-    --surface-border: #3c3327;
-    --muted: #a89a83;
+    --background: #16191b;
+    --foreground: #eef1f0;
+    --surface: #1e2224;
+    --surface-border: #2c3234;
+    --muted: #8f9997;
 
-    --accent: #e2895c;
-    --accent-hover: #ec9c72;
-    --accent-foreground: #1c1712;
-    --accent-soft: #4a3324;
+    --accent: #2dd4c0;
+    --accent-hover: #4de0cf;
+    --accent-foreground: #06201c;
+    --accent-soft: #163330;
 
-    --status-sealed: #8fc1e8;
-    --status-sealed-bg: #24384a;
-    --status-active: #a3d182;
-    --status-active-bg: #2c3d24;
-    --status-done: #c4b6a0;
-    --status-done-bg: #33291c;
+    --status-sealed: #7fb0e0;
+    --status-sealed-bg: #1c2c3d;
+    --status-active: #2dd4c0;
+    --status-active-bg: #123330;
+    --status-done: #a8b0ad;
+    --status-done-bg: #262b2a;
 
-    --dday-overdue: #f3a08f;
-    --dday-overdue-bg: #47281f;
-    --dday-urgent: #f0c17e;
-    --dday-urgent-bg: #46331c;
-    --dday-normal: #cabfa9;
-    --dday-normal-bg: #332c20;
+    --dday-overdue: #f0a29d;
+    --dday-overdue-bg: #3d201e;
+    --dday-urgent: #eec27a;
+    --dday-urgent-bg: #3a301c;
+    --dday-normal: #b9c0be;
+    --dday-normal-bg: #262b2a;
   }
 }
 
 body {
-  background:
-    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--foreground) 5%, transparent) 1px, transparent 0)
-      0 0 / 22px 22px,
-    var(--background);
+  background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
 
 @keyframes fade-in {

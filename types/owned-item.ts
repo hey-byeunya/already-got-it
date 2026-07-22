@@ -12,6 +12,7 @@ export interface OwnedItem {
   expiry_date: string | null
   memo: string | null
   status: OwnedItemStatus
+  used_up_at: string | null
   created_at: string
   updated_at: string
 }
