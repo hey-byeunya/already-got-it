@@ -10,14 +10,14 @@ interface WishlistItemListProps {
 export default function WishlistItemList({ items, markPurchased, deleteItem }: WishlistItemListProps) {
   if (items.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-black/40 dark:text-white/40">
-        위시리스트가 비어 있어요.
+      <p className="rounded-2xl border border-dashed border-surface-border py-10 text-center text-sm text-muted">
+        위시가 비어 있어요.
       </p>
     )
   }
 
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className="flex flex-col gap-3">
       {items.map((item) => (
         <WishlistItemCard
           key={item.id}

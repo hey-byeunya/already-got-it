@@ -5,7 +5,13 @@ import WishlistItemList from '@/components/WishlistItemList'
 import type { WishlistItem } from '@/types/wishlist-item'
 import { deleteWishlistItem, markWishlistPurchased } from './actions'
 
-export default async function WishlistPage() {
+export default async function WishlistPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { error: actionError } = await searchParams
+
   const supabase = await createClient()
   const {
     data: { user },
@@ -20,14 +26,22 @@ export default async function WishlistPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">위시리스트</h1>
+        <div>
+          <p className="text-xs font-medium tracking-wide text-muted">WISH LIST</p>
+          <h1 className="text-xl font-semibold tracking-tight">위시</h1>
+        </div>
         <Link
           href="/wishlist/new"
-          className="rounded-md bg-black px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 dark:bg-white dark:text-black"
+          className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover"
         >
           + 추가
         </Link>
       </div>
+      {actionError && (
+        <p role="alert" className="rounded-xl bg-dday-overdue-bg px-3 py-2 text-sm text-dday-overdue">
+          {actionError}
+        </p>
+      )}
       <WishlistItemList
         items={items}
         markPurchased={markWishlistPurchased}

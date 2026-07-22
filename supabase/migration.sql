@@ -63,7 +63,14 @@ create policy "wishlist_items_insert_own" on public.wishlist_items
 drop policy if exists "wishlist_items_delete_own" on public.wishlist_items;
 create policy "wishlist_items_delete_own" on public.wishlist_items
   for delete using (auth.uid() = user_id);
--- 수정(update) 기능은 스펙에 없으므로 update 정책은 만들지 않는다.
+
+-- "수정(update)" 기능 자체는 스펙에 없지만, mark_wishlist_purchased가 동시 재요청 방어를 위해
+-- select ... for update로 행을 잠근다. Postgres RLS는 FOR UPDATE 시 SELECT 정책과 함께
+-- UPDATE 정책도 만족해야 행을 반환하므로, 이 정책이 없으면 모든 잠금 조회가 0건을 반환해
+-- "이미 처리되었거나 존재하지 않는 항목"으로 오판된다. 실제 update 문은 여기서 실행하지 않는다.
+drop policy if exists "wishlist_items_update_own" on public.wishlist_items;
+create policy "wishlist_items_update_own" on public.wishlist_items
+  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- 3. updated_at 자동 갱신 트리거 (owned_items만 — wishlist는 수정 경로가 없음) --
 create or replace function public.set_updated_at()

@@ -1,14 +1,19 @@
 'use server'
 
+import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+
+function encodeError(message: string) {
+  return `/wishlist?error=${encodeURIComponent(message)}`
+}
 
 export async function deleteWishlistItem(itemId: string) {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  if (!user) redirect(encodeError('로그인이 필요해요'))
 
   const { data, error } = await supabase
     .from('wishlist_items')
@@ -17,8 +22,12 @@ export async function deleteWishlistItem(itemId: string) {
     .eq('user_id', user.id)
     .select()
 
-  if (error) throw new Error(error.message)
-  if (!data || data.length === 0) throw new Error('위시리스트 항목을 찾을 수 없어요')
+  if (error) redirect(encodeError(error.message))
+  if (!data || data.length === 0) {
+    // 이미 삭제됐거나 구매 처리된 항목에 대한 중복 요청(예: 더블 클릭) — 조용히 최신 목록만 다시 보여준다.
+    revalidatePath('/wishlist')
+    return
+  }
 
   revalidatePath('/wishlist')
 }
@@ -28,13 +37,20 @@ export async function markWishlistPurchased(itemId: string) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  if (!user) redirect(encodeError('로그인이 필요해요'))
 
   const { error } = await supabase.rpc('mark_wishlist_purchased', {
     p_wishlist_item_id: itemId,
   })
 
-  if (error) throw new Error('이미 처리되었거나 존재하지 않는 항목이에요')
+  if (error) {
+    if (error.code === 'P0002') {
+      // 이미 삭제됐거나 구매 처리된 항목에 대한 중복 요청(예: 더블 클릭) — 조용히 최신 목록만 다시 보여준다.
+      revalidatePath('/wishlist')
+      return
+    }
+    redirect(encodeError(`구매 처리 중 오류가 발생했어요: ${error.message}`))
+  }
 
   revalidatePath('/wishlist')
   revalidatePath('/')

@@ -5,9 +5,14 @@ import Link from 'next/link'
 import SearchBar from '@/components/SearchBar'
 import CategoryFilter from '@/components/CategoryFilter'
 import OwnedItemList from '@/components/OwnedItemList'
-import type { OwnedItem } from '@/types/owned-item'
+import type { OwnedItem, OwnedItemStatus } from '@/types/owned-item'
 
-export default function OwnedItemsExplorer({ items }: { items: OwnedItem[] }) {
+interface OwnedItemsExplorerProps {
+  items: OwnedItem[]
+  onStatusChange?: (itemId: string, status: OwnedItemStatus) => void | Promise<void>
+}
+
+export default function OwnedItemsExplorer({ items, onStatusChange }: OwnedItemsExplorerProps) {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('전체')
 
@@ -32,10 +37,13 @@ export default function OwnedItemsExplorer({ items }: { items: OwnedItem[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">보유템</h1>
+        <div>
+          <p className="text-xs font-medium tracking-wide text-muted">MY SHELF</p>
+          <h1 className="text-xl font-semibold tracking-tight">있템</h1>
+        </div>
         <Link
           href="/items/new"
-          className="rounded-md bg-black px-3 py-1.5 text-sm font-medium text-white hover:opacity-90 dark:bg-white dark:text-black"
+          className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover"
         >
           + 추가
         </Link>
@@ -46,7 +54,7 @@ export default function OwnedItemsExplorer({ items }: { items: OwnedItem[] }) {
         </div>
         <CategoryFilter categories={categories} value={category} onChange={setCategory} />
       </div>
-      <OwnedItemList items={filtered} />
+      <OwnedItemList items={filtered} onStatusChange={onStatusChange} />
     </div>
   )
 }

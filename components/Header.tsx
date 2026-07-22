@@ -3,10 +3,11 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from '@/app/actions'
+import { LogoutIcon, PouchIcon } from '@/components/icons'
 
 const TABS = [
-  { href: '/', label: '보유템' },
-  { href: '/wishlist', label: '위시리스트' },
+  { href: '/', label: '있템' },
+  { href: '/wishlist', label: '위시' },
 ]
 
 export default function Header() {
@@ -15,9 +16,12 @@ export default function Header() {
   if (pathname === '/login') return null
 
   return (
-    <header className="border-b border-black/10 dark:border-white/10">
+    <header className="border-b border-surface-border bg-surface/70 backdrop-blur-sm">
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3">
-        <span className="font-semibold">이미 있어</span>
+        <span className="flex items-center gap-1.5 font-semibold tracking-tight text-accent">
+          <PouchIcon className="h-5 w-5" />
+          이미 있어
+        </span>
         <div className="flex items-center gap-3">
           <nav className="flex gap-1">
             {TABS.map((tab) => {
@@ -26,10 +30,10 @@ export default function Header() {
                 <Link
                   key={tab.href}
                   href={tab.href}
-                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
                     active
-                      ? 'bg-black text-white dark:bg-white dark:text-black'
-                      : 'text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10'
+                      ? 'bg-accent text-accent-foreground'
+                      : 'text-foreground/60 hover:bg-accent-soft hover:text-foreground'
                   }`}
                 >
                   {tab.label}
@@ -40,9 +44,11 @@ export default function Header() {
           <form action={signOut}>
             <button
               type="submit"
-              className="text-sm text-black/50 hover:text-black/80 dark:text-white/50 dark:hover:text-white/80"
+              aria-label="로그아웃"
+              title="로그아웃"
+              className="rounded-full p-1.5 text-muted hover:bg-dday-overdue-bg hover:text-dday-overdue"
             >
-              로그아웃
+              <LogoutIcon className="h-4 w-4" />
             </button>
           </form>
         </div>

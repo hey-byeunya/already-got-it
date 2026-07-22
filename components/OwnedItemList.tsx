@@ -1,4 +1,4 @@
-import type { OwnedItem } from '@/types/owned-item'
+import type { OwnedItem, OwnedItemStatus } from '@/types/owned-item'
 import OwnedItemCard from './OwnedItemCard'
 
 function sortByExpiry(items: OwnedItem[]): OwnedItem[] {
@@ -10,21 +10,26 @@ function sortByExpiry(items: OwnedItem[]): OwnedItem[] {
   })
 }
 
-export default function OwnedItemList({ items }: { items: OwnedItem[] }) {
+interface OwnedItemListProps {
+  items: OwnedItem[]
+  onStatusChange?: (itemId: string, status: OwnedItemStatus) => void | Promise<void>
+}
+
+export default function OwnedItemList({ items, onStatusChange }: OwnedItemListProps) {
   const sorted = sortByExpiry(items)
 
   if (sorted.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-black/40 dark:text-white/40">
-        조건에 맞는 보유템이 없어요.
+      <p className="rounded-2xl border border-dashed border-surface-border py-10 text-center text-sm text-muted">
+        조건에 맞는 있템이 없어요.
       </p>
     )
   }
 
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className="flex flex-col gap-3">
       {sorted.map((item) => (
-        <OwnedItemCard key={item.id} item={item} />
+        <OwnedItemCard key={item.id} item={item} onStatusChange={onStatusChange} />
       ))}
     </ul>
   )

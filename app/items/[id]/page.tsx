@@ -31,7 +31,7 @@ export default async function EditOwnedItemPage({
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-lg font-semibold">보유템 수정</h1>
+      <h1 className="text-lg font-semibold">있템 수정</h1>
       <OwnedItemForm item={item} action={boundUpdate} submitLabel="저장" />
       <form action={boundDelete}>
         <button

@@ -1,26 +1,96 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f1e7;
+  --foreground: #2a241d;
+  --surface: #fffbf3;
+  --surface-border: #e7dcc6;
+  --muted: #8a7d68;
+
+  --accent: #bd4f2a;
+  --accent-hover: #a5411f;
+  --accent-foreground: #fff7f0;
+  --accent-soft: #f3ddc9;
+
+  --status-sealed: #2f6690;
+  --status-sealed-bg: #e1ebf1;
+  --status-active: #4f7a34;
+  --status-active-bg: #e6efdc;
+  --status-done: #8f7f68;
+  --status-done-bg: #ece4d4;
+
+  --dday-overdue: #a8331f;
+  --dday-overdue-bg: #f5dcd3;
+  --dday-urgent: #a8631a;
+  --dday-urgent-bg: #f5e3c8;
+  --dday-normal: #5b5140;
+  --dday-normal-bg: #ece4d4;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-border: var(--surface-border);
+  --color-muted: var(--muted);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-status-sealed: var(--status-sealed);
+  --color-status-sealed-bg: var(--status-sealed-bg);
+  --color-status-active: var(--status-active);
+  --color-status-active-bg: var(--status-active-bg);
+  --color-status-done: var(--status-done);
+  --color-status-done-bg: var(--status-done-bg);
+
+  --color-dday-overdue: var(--dday-overdue);
+  --color-dday-overdue-bg: var(--dday-overdue-bg);
+  --color-dday-urgent: var(--dday-urgent);
+  --color-dday-urgent-bg: var(--dday-urgent-bg);
+  --color-dday-normal: var(--dday-normal);
+  --color-dday-normal-bg: var(--dday-normal-bg);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1c1712;
+    --foreground: #f1e9da;
+    --surface: #262019;
+    --surface-border: #3c3327;
+    --muted: #a89a83;
+
+    --accent: #e2895c;
+    --accent-hover: #ec9c72;
+    --accent-foreground: #1c1712;
+    --accent-soft: #4a3324;
+
+    --status-sealed: #8fc1e8;
+    --status-sealed-bg: #24384a;
+    --status-active: #a3d182;
+    --status-active-bg: #2c3d24;
+    --status-done: #c4b6a0;
+    --status-done-bg: #33291c;
+
+    --dday-overdue: #f3a08f;
+    --dday-overdue-bg: #47281f;
+    --dday-urgent: #f0c17e;
+    --dday-urgent-bg: #46331c;
+    --dday-normal: #cabfa9;
+    --dday-normal-bg: #332c20;
   }
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--foreground) 5%, transparent) 1px, transparent 0)
+      0 0 / 22px 22px,
+    var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }

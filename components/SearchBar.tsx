@@ -1,5 +1,7 @@
 'use client'
 
+import { SearchIcon } from '@/components/icons'
+
 interface SearchBarProps {
   value: string
   onChange: (value: string) => void
@@ -8,12 +10,15 @@ interface SearchBarProps {
 
 export default function SearchBar({ value, onChange, placeholder }: SearchBarProps) {
   return (
-    <input
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder ?? '검색'}
-      className="w-full rounded-md border border-black/10 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/30 dark:border-white/15 dark:focus:border-white/30"
-    />
+    <div className="relative flex-1">
+      <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder ?? '검색'}
+        className="w-full rounded-full border border-surface-border bg-surface py-2 pl-9 pr-3.5 text-sm text-foreground placeholder:text-muted outline-none transition-colors focus:border-accent"
+      />
+    </div>
   )
 }

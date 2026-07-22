@@ -27,7 +27,7 @@ export default function WishlistItemForm({
         type="submit"
         className="mt-2 rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:opacity-90 dark:bg-white dark:text-black"
       >
-        위시리스트에 담기
+        위시에 담기
       </button>
     </form>
   )
