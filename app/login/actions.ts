@@ -58,12 +58,20 @@ export async function signUp(formData: FormData) {
   if (!agreedToTerms) redirect(encodeError('이용약관 및 개인정보 처리방침에 동의해 주세요'))
 
   const supabase = await createClient()
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: { data: { nickname } },
   })
   if (error) redirect(encodeError(translateAuthError(error)))
+
+  // 이메일 인증이 켜져 있으면 signUp 직후에는 세션이 없다(data.session === null). 이 상태로
+  // redirect('/')를 하면 세션이 없는 요청이라 proxy.ts가 다시 /login으로 튕겨내는 이중 리다이렉트가
+  // 발생하는데, 이 과정에서 화면 전환이 꼬여 로그인 화면에 사이드바가 잘못 나타나는 문제가 있었다.
+  // 세션 유무를 여기서 직접 확인해 필요한 목적지로 한 번에 이동시켜 이중 리다이렉트 자체를 없앤다.
+  if (!data.session) {
+    redirect(`/login?signedUp=1&email=${encodeURIComponent(email)}`)
+  }
 
   redirect('/')
 }

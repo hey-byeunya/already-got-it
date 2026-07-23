@@ -6,7 +6,15 @@ import AuthForm from '@/components/AuthForm'
 
 type Mode = 'signin' | 'signup'
 
-export default function AuthScreen({ initialError }: { initialError?: string }) {
+export default function AuthScreen({
+  initialError,
+  initialInfo,
+  initialEmail,
+}: {
+  initialError?: string
+  initialInfo?: string
+  initialEmail?: string
+}) {
   const [mode, setMode] = useState<Mode>('signin')
 
   return (
@@ -14,7 +22,13 @@ export default function AuthScreen({ initialError }: { initialError?: string }) 
       <AuthHeroPanel mode={mode} />
       <div className="flex flex-1 basis-[420px] flex-col justify-center p-8 md:p-12">
         <div className="mx-auto flex w-full max-w-[400px] flex-col gap-5">
-          <AuthForm mode={mode} onModeChange={setMode} initialError={initialError} />
+          <AuthForm
+            mode={mode}
+            onModeChange={setMode}
+            initialError={initialError}
+            initialInfo={initialInfo}
+            initialEmail={initialEmail}
+          />
         </div>
       </div>
     </div>
