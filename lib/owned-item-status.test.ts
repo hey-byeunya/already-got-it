@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { OwnedItem } from '@/types/owned-item'
 import {
   deriveUsedUpAt,
+  deriveUsedUpAtForUpdate,
   isUsedUpItem,
   revertUsedItemFields,
   sortByUsedUpAtDesc,
@@ -33,6 +34,21 @@ describe('deriveUsedUpAt', () => {
   it('상태가 "다 씀"이 아니면 항상 null이다 (미개봉/사용중 모두)', () => {
     expect(deriveUsedUpAt('미개봉', '2026-07-22')).toBeNull()
     expect(deriveUsedUpAt('사용중', '2026-07-22')).toBeNull()
+  })
+})
+
+describe('deriveUsedUpAtForUpdate', () => {
+  it('다 씀이 아닌 상태로 바뀌면 항상 null이다', () => {
+    expect(deriveUsedUpAtForUpdate('다 씀', '사용중', '2026-07-15', '2026-07-22')).toBeNull()
+    expect(deriveUsedUpAtForUpdate('미개봉', '미개봉', null, '2026-07-22')).toBeNull()
+  })
+
+  it('다 씀이 아니었다가 다 씀으로 바뀌면(진짜 전환) 오늘 날짜를 새로 기록한다', () => {
+    expect(deriveUsedUpAtForUpdate('사용중', '다 씀', null, '2026-07-22')).toBe('2026-07-22')
+  })
+
+  it('이미 다 씀이던 항목을 다른 필드만 고쳐 재저장하면(상태 그대로) 기존 날짜를 유지한다', () => {
+    expect(deriveUsedUpAtForUpdate('다 씀', '다 씀', '2026-07-15', '2026-07-22')).toBe('2026-07-15')
   })
 })
 

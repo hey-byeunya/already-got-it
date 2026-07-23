@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { isAuthExemptPath } from '@/lib/auth-routes'
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request })
@@ -28,12 +29,8 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const isLoginPage = request.nextUrl.pathname.startsWith('/login')
-  const isPreviewPage = request.nextUrl.pathname.startsWith('/preview')
-  const isPublicAuthPage =
-    request.nextUrl.pathname.startsWith('/forgot-password') ||
-    request.nextUrl.pathname.startsWith('/reset-password')
 
-  if (!user && !isLoginPage && !isPreviewPage && !isPublicAuthPage) {
+  if (!user && !isAuthExemptPath(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     const redirectResponse = NextResponse.redirect(url)

@@ -90,3 +90,15 @@
 - [x] 11.8 `--input-bg` 토큰 신설 + 있템/위시 추가·수정 화면에 흰 카드 래퍼 추가, 카테고리 칩·수량 스테퍼 등 폼 컨트롤 배경 대비 개선
 - [x] 11.9 `openspec validate add-inventory-wishlist --strict` 통과 확인, `PRD.md`/`CLAUDE.md`/`README.md`에 신규 기능·컨벤션 반영
 - [x] 11.10 `npx tsc --noEmit` + `npx eslint .` + `npm test` 전체 통과 확인, 실제 로그인 브라우저로 사이드바/카드 그리드/폼 카드/로그인 히어로 패널/반응형 접힘 검증
+- [x] 11.11 회원가입 후 이메일 인증 대기 상태로 로그인 화면에 돌아올 때 발생하던 이중 리다이렉트(사이드바 오표시) 수정 — `signUp`이 세션 유무를 확인해 단일 리다이렉트로 이동, 가입 확인 안내 배너 + 이메일 자동 채움 추가
+
+## 12. 코드 리뷰 결함 수정 (후속 라운드)
+
+- [x] 12.1 `lib/owned-item-status.ts`에 `deriveUsedUpAtForUpdate` 추가, `app/items/[id]/actions.ts`가 수정 전 기존 `status`/`used_up_at`을 조회해 계산 — 이미 "다 씀"인 항목을 다른 필드만 고쳐 재저장해도 `used_up_at`이 오늘 날짜로 덮어써지지 않도록 수정. `app/items/new/actions.ts`(신규 등록)는 이전 상태가 없으므로 기존 `deriveUsedUpAt` 그대로 사용
+- [x] 12.2 `components/OwnedItemForm.tsx`의 메모 입력을 `<input>`에서 `<textarea rows={2}>`로 복원(사용기한과 나란히 배치되는 레이아웃은 유지)
+- [x] 12.3 `components/OwnedItemForm.tsx`/`WishlistItemForm.tsx`의 저장 폼과 `secondaryAction`(삭제 폼)의 `<form>` 중첩을 제거 — `useId()`로 폼 id를 부여하고 저장 버튼은 `form={id}` 속성으로 폼 밖에서 제출, `secondaryAction`은 형제 요소로 렌더링
+- [x] 12.4 `app/forgot-password/actions.ts`의 비밀번호 재설정 리다이렉트가 요청 `Host` 헤더를 그대로 신뢰하던 문제 수정 — `NEXT_PUBLIC_SITE_URL` 환경변수를 우선 사용하고, 프로덕션에서 미설정 시 에러를 던지는 fail-closed 방식으로 변경(`.env.local.example`에 변수 추가)
+- [x] 12.5 `lib/auth-errors.ts` 신설(`translateAuthError`/`EMAIL_PATTERN`을 `app/login/actions.ts`에서 이동), `app/forgot-password/actions.ts`도 이 함수로 에러 메시지를 필터링하도록 수정(`app/reset-password/page.tsx`는 별도 실패 양상이라 기존 고정 문구 유지)
+- [x] 12.6 회원가입 직후 이메일을 URL 쿼리스트링(`/login?signedUp=1&email=...`) 대신 60초 만료 쿠키(`signup_email`)로 전달하도록 변경 — `app/login/actions.ts`가 쿠키를 심고 `app/login/page.tsx`가 서버 사이드에서만 읽음
+- [x] 12.7 `lib/auth-routes.ts` 신설(`isAuthExemptPath`), `components/Sidebar.tsx`와 `lib/supabase/proxy.ts`가 각자 다른 규칙(완전일치 vs 접두사 일치)으로 판정하던 인증 예외 경로를 단일 함수로 통합
+- [x] 12.8 `npx tsc --noEmit` + `npx eslint .` + `npm test`(신규 `deriveUsedUpAtForUpdate` 테스트 케이스 포함) 전체 통과 확인, `openspec validate add-inventory-wishlist --strict` 통과 확인, `PRD.md`/`CLAUDE.md`에 반영
