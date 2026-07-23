@@ -7,6 +7,20 @@ export function deriveUsedUpAt(nextStatus: OwnedItemStatus, todayIso: string): s
   return nextStatus === '다 씀' ? todayIso : null
 }
 
+// 수정(edit) 경로 전용: 신규 등록과 달리 "이전 상태"를 알 수 있으므로, 이미 "다 씀"이던 항목을
+// 다른 필드만 고쳐 재저장하는 경우(진짜 전환이 아님)에는 기존 usedUpAt을 그대로 유지한다.
+// 그렇지 않으면 매번 저장할 때마다 오늘 날짜로 덮어써져 쓴템 목록 정렬(최근 다 쓴 순)이 틀어진다.
+export function deriveUsedUpAtForUpdate(
+  prevStatus: OwnedItemStatus,
+  nextStatus: OwnedItemStatus,
+  prevUsedUpAt: string | null,
+  todayIso: string
+): string | null {
+  if (nextStatus !== '다 씀') return null
+  if (prevStatus === '다 씀') return prevUsedUpAt
+  return todayIso
+}
+
 export function isUsedUpItem(item: Pick<OwnedItem, 'status'>): boolean {
   return item.status === '다 씀'
 }

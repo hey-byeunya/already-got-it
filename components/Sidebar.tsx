@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import ProfileMenu from '@/components/ProfileMenu'
 import { BoxIcon, GiftIcon, UndoIcon } from '@/components/icons'
+import { isAuthExemptPath } from '@/lib/auth-routes'
 
 const TABS = [
   { href: '/', label: '있템', Icon: BoxIcon },
@@ -19,12 +20,7 @@ interface SidebarProps {
 export default function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname()
 
-  const isExcludedPage =
-    pathname === '/login' ||
-    pathname.startsWith('/forgot-password') ||
-    pathname.startsWith('/reset-password') ||
-    pathname.startsWith('/preview')
-  if (isExcludedPage) return null
+  if (isAuthExemptPath(pathname)) return null
 
   return (
     <aside

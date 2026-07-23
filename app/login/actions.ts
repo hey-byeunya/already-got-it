@@ -1,34 +1,12 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+import { EMAIL_PATTERN, translateAuthError } from '@/lib/auth-errors'
 
 function encodeError(message: string) {
   return `/login?error=${encodeURIComponent(message)}`
-}
-
-function translateAuthError(error: { message: string; code?: string }): string {
-  const code = error.code
-  const msg = error.message
-
-  if (code === 'invalid_credentials' || msg.includes('Invalid login credentials')) {
-    return '이메일 또는 비밀번호가 올바르지 않아요. 등록되지 않은 이메일일 수도 있어요.'
-  }
-  if (code === 'email_not_confirmed' || msg.includes('Email not confirmed')) {
-    return '이메일 인증이 아직 완료되지 않았어요. 받은 편지함에서 인증 메일을 확인해 주세요.'
-  }
-  if (code === 'user_already_exists' || msg.includes('already registered')) {
-    return '이미 가입된 이메일이에요. 로그인해 주세요.'
-  }
-  if (code === 'weak_password' || msg.includes('Password')) {
-    return '비밀번호가 너무 약해요. 6자 이상의 다른 비밀번호를 입력해 주세요.'
-  }
-  if (code === 'over_email_send_rate_limit' || msg.includes('email rate limit')) {
-    return '인증 메일 발송 횟수 제한에 걸렸어요. 잠시 후(보통 1시간 이내) 다시 시도해 주세요.'
-  }
-  return msg
 }
 
 export async function signIn(formData: FormData) {
@@ -70,7 +48,11 @@ export async function signUp(formData: FormData) {
   // 발생하는데, 이 과정에서 화면 전환이 꼬여 로그인 화면에 사이드바가 잘못 나타나는 문제가 있었다.
   // 세션 유무를 여기서 직접 확인해 필요한 목적지로 한 번에 이동시켜 이중 리다이렉트 자체를 없앤다.
   if (!data.session) {
-    redirect(`/login?signedUp=1&email=${encodeURIComponent(email)}`)
+    // 이메일을 URL 쿼리스트링에 실으면 브라우저 히스토리/서버 접근 로그에 그대로 남으므로,
+    // 60초 뒤 자연 만료되는 쿠키에 담아 로그인 화면(Server Component)에서 서버 사이드로만 읽는다.
+    const cookieStore = await cookies()
+    cookieStore.set('signup_email', email, { maxAge: 60 })
+    redirect('/login?signedUp=1')
   }
 
   redirect('/')
