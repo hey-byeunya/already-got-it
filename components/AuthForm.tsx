@@ -22,15 +22,20 @@ interface AuthFormProps {
   mode: Mode
   onModeChange: (mode: Mode) => void
   initialError?: string
+  initialInfo?: string
+  initialEmail?: string
 }
 
-export default function AuthForm({ mode, onModeChange, initialError }: AuthFormProps) {
+export default function AuthForm({ mode, onModeChange, initialError, initialInfo, initialEmail }: AuthFormProps) {
   const [error, setError] = useState<string | null>(initialError ?? null)
+  const [info, setInfo] = useState<string | null>(initialInfo ?? null)
   const [rememberEmail, setRememberEmail] = useState(false)
-  const [rememberedEmail, setRememberedEmail] = useState('')
+  const [rememberedEmail, setRememberedEmail] = useState(initialEmail ?? '')
   const [agreedToTerms, setAgreedToTerms] = useState(false)
 
   useEffect(() => {
+    // 방금 회원가입한 이메일이 있으면 그걸 우선 보여주고, 로컬에 저장된 이메일로 덮어쓰지 않는다.
+    if (initialEmail) return
     // localStorage는 서버 렌더링 시점에 없으므로, 하이드레이션 불일치를 피하려면
     // 마운트 후 이 effect에서만 읽어와 반영해야 한다 (렌더 중 파생 불가).
     const saved = window.localStorage.getItem(REMEMBERED_EMAIL_KEY)
@@ -39,11 +44,12 @@ export default function AuthForm({ mode, onModeChange, initialError }: AuthFormP
       setRememberedEmail(saved)
       setRememberEmail(true)
     }
-  }, [])
+  }, [initialEmail])
 
   function switchMode(next: Mode) {
     onModeChange(next)
     setError(null)
+    setInfo(null)
   }
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -106,6 +112,11 @@ export default function AuthForm({ mode, onModeChange, initialError }: AuthFormP
         <p className="mt-2 text-sm text-muted">{sub}</p>
       </div>
 
+      {info && (
+        <p role="status" className="rounded-xl bg-accent-soft px-3 py-2 text-sm text-accent">
+          {info}
+        </p>
+      )}
       {error && (
         <p role="alert" className="rounded-xl bg-dday-overdue-bg px-3 py-2 text-sm text-dday-overdue">
           {error}
@@ -117,7 +128,10 @@ export default function AuthForm({ mode, onModeChange, initialError }: AuthFormP
         noValidate
         action={mode === 'signin' ? signIn : signUp}
         onSubmit={handleSubmit}
-        onChange={() => setError(null)}
+        onChange={() => {
+          setError(null)
+          setInfo(null)
+        }}
         className="flex flex-col gap-3"
       >
         {mode === 'signup' && (
