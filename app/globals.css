@@ -5,6 +5,7 @@
   --foreground: #1b1b1b;
   --surface: #ffffff;
   --surface-border: #e8ebea;
+  --input-bg: #fafbfb;
   --muted: #8a918f;
 
   --accent: #00a090;
@@ -32,6 +33,7 @@
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
   --color-surface-border: var(--surface-border);
+  --color-input-bg: var(--input-bg);
   --color-muted: var(--muted);
 
   --color-accent: var(--accent);
@@ -62,6 +64,7 @@
     --foreground: #eef1f0;
     --surface: #1e2224;
     --surface-border: #2c3234;
+    --input-bg: #1a1e20;
     --muted: #8f9997;
 
     --accent: #2dd4c0;

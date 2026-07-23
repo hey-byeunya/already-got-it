@@ -25,7 +25,7 @@ export default function UsedItemList({ items, revertItem }: UsedItemListProps) {
   }
 
   return (
-    <ul className="flex flex-col gap-3">
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
       {items.map((item) => (
         <UsedItemCard key={item.id} item={item} onRevert={revertItem.bind(null, item.id)} />
       ))}

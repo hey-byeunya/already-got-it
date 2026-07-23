@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
 import BfcacheGuard from "@/components/BfcacheGuard";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,7 +19,7 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const headerUser = user
+  const sidebarUser = user
     ? { nickname: (user.user_metadata?.nickname as string | undefined) ?? null, email: user.email ?? "" }
     : null;
 
@@ -33,8 +33,10 @@ export default async function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <BfcacheGuard />
-        <Header user={headerUser} />
-        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">{children}</main>
+        <div className="flex min-h-full flex-1 flex-col md:flex-row">
+          <Sidebar user={sidebarUser} />
+          <main className="flex w-full flex-1 flex-col px-4 py-6 md:px-8 md:py-8">{children}</main>
+        </div>
       </body>
     </html>
   );

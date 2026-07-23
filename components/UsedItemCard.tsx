@@ -11,7 +11,7 @@ interface UsedItemCardProps {
 
 export default function UsedItemCard({ item, onRevert }: UsedItemCardProps) {
   return (
-    <li className="flex items-center justify-between gap-3 rounded-2xl border border-surface-border bg-surface p-4 shadow-sm">
+    <li className="flex items-center justify-between gap-3 rounded-2xl border border-surface-border bg-surface p-[18px] shadow-sm">
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium">{item.name}</p>
         <p className="mt-1 flex items-center gap-1.5 text-sm text-muted">
@@ -20,7 +20,7 @@ export default function UsedItemCard({ item, onRevert }: UsedItemCardProps) {
           </span>
           <span className="inline-flex items-center gap-1 whitespace-nowrap">
             <CalendarIcon className="h-3.5 w-3.5" />
-            다 씀 {item.used_up_at ?? '-'}
+            다 씀 {item.updated_at.slice(0, 10)}
           </span>
         </p>
       </div>
