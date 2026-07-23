@@ -45,7 +45,7 @@ export default function OwnedItemList({ items, hasAnyItems, includeUsedUp, onSta
   }
 
   return (
-    <ul className="flex flex-col gap-3">
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
       {sorted.map((item) => (
         <OwnedItemCard key={item.id} item={item} onStatusChange={onStatusChange} />
       ))}

@@ -18,10 +18,10 @@ export default async function UsedItemsPage() {
   const usedItems = sortByUsedUpAtDesc(((data ?? []) as OwnedItem[]).filter(isUsedUpItem))
 
   return (
-    <div className="flex animate-fade-in flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-6xl animate-fade-in flex-col gap-4">
       <div>
-        <p className="text-xs font-medium tracking-wide text-muted">USED UP</p>
-        <h1 className="text-xl font-semibold tracking-tight">쓴템</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight">쓴템</h1>
+        <p className="mt-1 text-sm text-muted">다 쓴 있템을 모아뒀어요</p>
       </div>
       <UsedItemList items={usedItems} revertItem={revertUsedItem} />
     </div>

@@ -37,21 +37,18 @@ export default function WishlistItemCard({
         if (e.propertyName === 'grid-template-rows' && leaving) onPurchasedAndRemoved()
       }}
       className={`grid overflow-hidden rounded-2xl border bg-surface shadow-sm transition-[grid-template-rows,opacity] duration-300 ease-in ${
-        leaving ? 'grid-rows-[0fr] border-transparent opacity-0' : 'grid-rows-[1fr] border-surface-border opacity-100 hover:shadow-md'
+        leaving ? 'grid-rows-[0fr] border-transparent opacity-0' : 'grid-rows-[1fr] border-surface-border opacity-100'
       }`}
     >
-      <div className="flex min-h-0 items-stretch overflow-hidden">
-        <span className="w-1.5 shrink-0 bg-accent-soft" aria-hidden />
-        <div className="flex flex-1 flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-h-0 flex-col gap-4 overflow-hidden p-[18px]">
+        <div className="flex items-start justify-between gap-3">
           <Link href={`/wishlist/${item.id}`} className="min-w-0 flex-1">
-            <p className="truncate font-medium">{item.name}</p>
-            {item.memo && (
-              <p className="mt-0.5 break-words text-sm italic text-muted">&ldquo;{item.memo}&rdquo;</p>
-            )}
-            <div className="mt-1.5 flex items-center gap-2.5">
-              <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-dday-normal-bg px-2 py-0.5 text-xs text-dday-normal">
-                <CalendarIcon className="h-3 w-3 shrink-0" />
-                담은 날짜 {item.created_at.slice(0, 10)}
+            <p className="truncate font-semibold">{item.name}</p>
+            {item.memo && <p className="mt-1 line-clamp-2 text-sm text-muted">{item.memo}</p>}
+            <div className="mt-2 flex items-center gap-3 text-xs text-muted">
+              <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                <CalendarIcon className="h-3.5 w-3.5" />
+                담은 날 {item.created_at.slice(0, 10)}
               </span>
               {item.link && (
                 <a
@@ -67,24 +64,22 @@ export default function WishlistItemCard({
               )}
             </div>
           </Link>
-          <div className="flex shrink-0 items-center justify-end gap-1.5">
-            <form action={onDelete}>
-              <FormSubmitButton
-                ariaLabel="삭제"
-                title="삭제"
-                className="rounded-full p-2 text-muted hover:bg-dday-overdue-bg hover:text-dday-overdue"
-              >
-                <TrashIcon className="h-4 w-4" />
-              </FormSubmitButton>
-            </form>
-            <form action={handlePurchaseSubmit}>
-              <FormSubmitButton className="flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover">
-                <CheckIcon className="h-3.5 w-3.5" />
-                구매
-              </FormSubmitButton>
-            </form>
-          </div>
+          <form action={onDelete}>
+            <FormSubmitButton
+              ariaLabel="삭제"
+              title="삭제"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-surface-border text-muted transition-colors hover:border-dday-overdue/40 hover:bg-dday-overdue-bg hover:text-dday-overdue"
+            >
+              <TrashIcon className="h-4 w-4" />
+            </FormSubmitButton>
+          </form>
         </div>
+        <form action={handlePurchaseSubmit}>
+          <FormSubmitButton className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-accent py-2.5 text-sm font-bold text-accent-hover transition-colors hover:bg-accent-soft">
+            <CheckIcon className="h-4 w-4" />
+            샀어요 · 있템으로
+          </FormSubmitButton>
+        </form>
       </div>
     </li>
   )

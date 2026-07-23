@@ -39,20 +39,30 @@ export default function ProfileMenu({ nickname, email }: ProfileMenuProps) {
   }, [open])
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative md:w-full">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="프로필 메뉴"
-        className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-accent-soft text-muted transition-colors hover:text-accent"
+        className="flex items-center gap-2.5 rounded-full p-1.5 text-muted transition-colors hover:text-accent
+                   md:w-full md:rounded-2xl md:border md:border-surface-border md:bg-background md:p-3 md:hover:text-foreground"
       >
-        <PersonIcon className="h-[19px] w-[19px]" />
+        <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+          <PersonIcon className="h-[19px] w-[19px]" />
+        </span>
+        <span className="hidden min-w-0 flex-1 text-left md:block">
+          <span className="block truncate text-sm font-bold text-foreground">{nickname ?? '이미 있어 사용자'}</span>
+          <span className="block truncate text-xs text-muted">{email}</span>
+        </span>
       </button>
       {open && (
-        <div className="absolute right-0 top-[calc(100%+8px)] z-20 w-56 rounded-2xl border border-surface-border bg-surface p-3 shadow-lg">
-          <p className="truncate px-1 text-sm font-bold">{nickname ?? '이미 있어 사용자'}</p>
-          <p className="truncate px-1 text-xs text-muted">{email}</p>
-          <form action={handleSignOut} className="mt-2 border-t border-surface-border pt-2">
+        <div
+          className="absolute right-0 top-[calc(100%+8px)] z-20 w-56 rounded-2xl border border-surface-border bg-surface p-3 shadow-lg
+                     md:bottom-[calc(100%+8px)] md:left-0 md:right-auto md:top-auto md:w-full"
+        >
+          <p className="truncate px-1 text-sm font-bold md:hidden">{nickname ?? '이미 있어 사용자'}</p>
+          <p className="truncate px-1 text-xs text-muted md:hidden">{email}</p>
+          <form action={handleSignOut} className="mt-2 border-t border-surface-border pt-2 md:mt-0 md:border-t-0 md:pt-0">
             <button
               type="submit"
               className="flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left text-sm font-medium text-dday-overdue transition-colors hover:bg-dday-overdue-bg"

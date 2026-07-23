@@ -60,7 +60,7 @@ export default function WishlistItemList({ items: itemsProp, markPurchased, dele
   }
 
   return (
-    <ul className="flex flex-col gap-3">
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4">
       {items.map((item) => (
         <WishlistItemCard
           key={item.id}

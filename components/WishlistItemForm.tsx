@@ -1,19 +1,28 @@
+import type { ReactNode } from 'react'
 import PendingOverlay from '@/components/PendingOverlay'
 import CategoryPicker from '@/components/CategoryPicker'
 import { LinkIcon } from '@/components/icons'
 import type { WishlistItem } from '@/types/wishlist-item'
 
 const inputClass =
-  'rounded-xl border border-surface-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent'
+  'rounded-xl border border-surface-border bg-input-bg px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent'
 
 interface WishlistItemFormProps {
   item?: WishlistItem
   existingCategories: string[]
   action: (formData: FormData) => void | Promise<void>
   submitLabel: string
+  // 삭제 버튼처럼 별도 <form>이 필요한 보조 액션을 저장 버튼과 같은 줄에 나란히 붙이기 위한 슬롯.
+  secondaryAction?: ReactNode
 }
 
-export default function WishlistItemForm({ item, existingCategories, action, submitLabel }: WishlistItemFormProps) {
+export default function WishlistItemForm({
+  item,
+  existingCategories,
+  action,
+  submitLabel,
+  secondaryAction,
+}: WishlistItemFormProps) {
   return (
     <form action={action} className="relative flex animate-fade-in flex-col gap-3">
       <PendingOverlay />
@@ -47,12 +56,15 @@ export default function WishlistItemForm({ item, existingCategories, action, sub
         </div>
       </label>
 
-      <button
-        type="submit"
-        className="mt-2 rounded-xl bg-accent px-3 py-2.5 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover"
-      >
-        {submitLabel}
-      </button>
+      <div className="mt-2 flex gap-3">
+        <button
+          type="submit"
+          className="flex-1 rounded-xl bg-accent px-3 py-2.5 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover"
+        >
+          {submitLabel}
+        </button>
+        {secondaryAction}
+      </div>
     </form>
   )
 }

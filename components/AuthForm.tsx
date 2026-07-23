@@ -4,16 +4,27 @@ import { useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { signIn, signUp } from '@/app/login/actions'
 import { REMEMBERED_EMAIL_KEY } from '@/lib/client-session'
+import { CheckIcon } from '@/components/icons'
 
 type Mode = 'signin' | 'signup'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const inputClass =
-  'rounded-xl border border-surface-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent'
+  'rounded-xl border border-surface-border bg-input-bg px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent'
 
-export default function AuthForm({ initialError }: { initialError?: string }) {
-  const [mode, setMode] = useState<Mode>('signin')
+const TITLE_COPY: Record<Mode, { title: string; sub: string }> = {
+  signin: { title: '다시 오셨네요', sub: '계정에 로그인하고 재고를 이어서 관리해요.' },
+  signup: { title: '계정 만들기', sub: '나만의 재고 공간을 만들어요.' },
+}
+
+interface AuthFormProps {
+  mode: Mode
+  onModeChange: (mode: Mode) => void
+  initialError?: string
+}
+
+export default function AuthForm({ mode, onModeChange, initialError }: AuthFormProps) {
   const [error, setError] = useState<string | null>(initialError ?? null)
   const [rememberEmail, setRememberEmail] = useState(false)
   const [rememberedEmail, setRememberedEmail] = useState('')
@@ -31,7 +42,7 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
   }, [])
 
   function switchMode(next: Mode) {
-    setMode(next)
+    onModeChange(next)
     setError(null)
   }
 
@@ -86,27 +97,13 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
     setError(null)
   }
 
+  const { title, sub } = TITLE_COPY[mode]
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-1 rounded-full border border-surface-border bg-surface p-1">
-        <button
-          type="button"
-          onClick={() => switchMode('signin')}
-          className={`flex-1 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-            mode === 'signin' ? 'bg-accent text-accent-foreground' : 'text-muted hover:text-foreground'
-          }`}
-        >
-          로그인
-        </button>
-        <button
-          type="button"
-          onClick={() => switchMode('signup')}
-          className={`flex-1 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-            mode === 'signup' ? 'bg-accent text-accent-foreground' : 'text-muted hover:text-foreground'
-          }`}
-        >
-          회원가입
-        </button>
+    <div className="flex flex-col gap-5">
+      <div>
+        <h1 className="text-2xl font-extrabold tracking-tight md:text-[28px]">{title}</h1>
+        <p className="mt-2 text-sm text-muted">{sub}</p>
       </div>
 
       {error && (
@@ -124,7 +121,7 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
         className="flex flex-col gap-3"
       >
         {mode === 'signup' && (
-          <input name="nickname" type="text" required placeholder="닉네임" className={inputClass} />
+          <input name="nickname" type="text" required placeholder="앱에서 불릴 이름" className={inputClass} />
         )}
         <input
           name="email"
@@ -154,13 +151,20 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
         )}
         {mode === 'signin' && (
           <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 text-sm text-muted">
+            <label className="flex items-center gap-2.5 text-sm font-medium text-muted">
               <input
                 type="checkbox"
                 checked={rememberEmail}
                 onChange={(e) => setRememberEmail(e.target.checked)}
-                className="h-4 w-4 rounded border-surface-border accent-accent"
+                className="peer sr-only"
               />
+              <span
+                className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[7px] border-[1.5px] transition-colors ${
+                  rememberEmail ? 'border-accent bg-accent' : 'border-surface-border bg-surface'
+                }`}
+              >
+                {rememberEmail && <CheckIcon className="h-3.5 w-3.5 text-accent-foreground" />}
+              </span>
               이메일 저장
             </label>
             <Link href="/forgot-password" className="text-sm text-muted hover:text-accent">
@@ -169,14 +173,21 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
           </div>
         )}
         {mode === 'signup' && (
-          <label className="flex items-start gap-2 text-sm text-muted">
+          <label className="flex items-start gap-2.5 text-sm text-muted">
             <input
               type="checkbox"
               name="agreedToTerms"
               checked={agreedToTerms}
               onChange={(e) => setAgreedToTerms(e.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 rounded border-surface-border accent-accent"
+              className="peer sr-only"
             />
+            <span
+              className={`mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[7px] border-[1.5px] transition-colors ${
+                agreedToTerms ? 'border-accent bg-accent' : 'border-surface-border bg-surface'
+              }`}
+            >
+              {agreedToTerms && <CheckIcon className="h-3.5 w-3.5 text-accent-foreground" />}
+            </span>
             <span>
               <span className="font-medium text-foreground">이용약관</span> 및{' '}
               <span className="font-medium text-foreground">개인정보 처리방침</span>에 동의합니다
@@ -187,9 +198,27 @@ export default function AuthForm({ initialError }: { initialError?: string }) {
           type="submit"
           className="mt-1 rounded-xl bg-accent px-3 py-2.5 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover"
         >
-          확인
+          {mode === 'signin' ? '로그인' : '가입하고 시작하기'}
         </button>
       </form>
+
+      <div className="text-center text-sm text-muted">
+        {mode === 'signin' ? (
+          <>
+            아직 계정이 없나요?{' '}
+            <button type="button" onClick={() => switchMode('signup')} className="font-bold text-foreground hover:text-accent">
+              회원가입
+            </button>
+          </>
+        ) : (
+          <>
+            이미 계정이 있나요?{' '}
+            <button type="button" onClick={() => switchMode('signin')} className="font-bold text-foreground hover:text-accent">
+              로그인
+            </button>
+          </>
+        )}
+      </div>
     </div>
   )
 }

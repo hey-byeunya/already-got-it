@@ -16,18 +16,22 @@ export default async function NewOwnedItemPage() {
   if (error) throw new Error(error.message)
 
   return (
-    <div className="flex animate-fade-in flex-col gap-4">
-      <div className="flex items-center gap-3">
-        <Link
-          href="/"
-          aria-label="있템 목록으로"
-          className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-foreground transition-colors hover:text-accent"
-        >
-          <BackIcon className="h-4 w-4" />
-        </Link>
-        <h1 className="text-lg font-semibold">있템 추가</h1>
+    <div className="mx-auto flex w-full max-w-4xl animate-fade-in flex-col gap-4">
+      <div className="overflow-hidden rounded-[28px] border border-surface-border bg-surface">
+        <div className="flex items-center gap-3 border-b border-surface-border px-6 py-5">
+          <Link
+            href="/"
+            aria-label="있템 목록으로"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-foreground transition-colors hover:text-accent"
+          >
+            <BackIcon className="h-4 w-4" />
+          </Link>
+          <h1 className="text-lg font-semibold">있템 추가</h1>
+        </div>
+        <div className="p-6">
+          <OwnedItemForm existingCategories={(categories ?? []) as string[]} action={createOwnedItem} submitLabel="있템에 담기" />
+        </div>
       </div>
-      <OwnedItemForm existingCategories={(categories ?? []) as string[]} action={createOwnedItem} submitLabel="있템에 담기" />
     </div>
   )
 }

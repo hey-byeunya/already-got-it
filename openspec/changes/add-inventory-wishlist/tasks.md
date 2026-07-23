@@ -66,3 +66,27 @@
 - [x] 9.8 목록 빈 상태를 아이콘 + 헤드라인 + 설명 + CTA 버튼 형태로 재작성 (보유템/위시 각각 `/items/new`, `/wishlist/new`로 연결)
 - [x] 9.9 `openspec validate add-inventory-wishlist --strict` 통과 확인, `PRD.md`/`CLAUDE.md`에 신규 기능·컨벤션 반영
 - [x] 9.10 `npx tsc --noEmit` + `npx eslint .` 전체 통과 확인, 비로그인 미리보기 화면(`/preview`, `/preview/wishlist`) 브라우저 검증 — 닉네임 가입/비밀번호 찾기/위시 수정/프로필 메뉴 등 로그인 필요 화면은 비밀번호 대리 입력이 불가능하므로 사용자 직접 확인 필요
+
+## 10. 쓴템 탭 + 세션 보안 (후속 라운드)
+
+- [x] 10.1 `owned_items.used_up_at`(date, nullable) 컬럼 추가. `deriveUsedUpAt`/`revertUsedItemFields`(`lib/owned-item-status.ts`)로 상태 전이 시 값 계산 — "다 씀"이 될 때만 오늘 날짜, 그 외엔 null
+- [x] 10.2 "쓴템" 탭(`/used`) 신설: 다 씀 상태 항목만 조회해 표시, 되돌리기 버튼(`revertUsedItem` 서버 액션)으로 "사용중" 상태 + `used_up_at` null 복귀
+- [x] 10.3 순수 정렬 함수 `sortOwnedItemsForList`(`lib/owned-item-sort.ts`) 작성: 사용기한 임박순 → 사용기한 없음(등록 최근순) → 다 씀(토글 시 노출, 항상 최하단·자기들끼리 상태변경 최근순). 있템 목록에 "다 쓴 것도 보기" 토글 연결
+- [x] 10.4 vitest 도입, 정렬 함수·상태 전이 로직에 대한 단위 테스트 작성(사용자가 제시한 검증 시나리오 포함)
+- [x] 10.5 로그아웃 시 클라이언트 상태·`localStorage`/`sessionStorage`(이메일 저장 값 제외) 정리 후 전체 페이지 새로고침(`lib/client-session.ts`, `components/ProfileMenu.tsx`)
+- [x] 10.6 서버 액션의 `!user` 처리를 `throw`에서 `redirect('/login')`으로 통일(세션 만료 시 에러 화면 대신 로그인 이동)
+- [x] 10.7 `components/BfcacheGuard.tsx` 신설(뒤로가기 bfcache 복원 감지 시 강제 새로고침), `lib/supabase/proxy.ts` 응답에 `Cache-Control: no-store` 강제
+- [x] 10.8 쓴템 목록 카드의 표시 날짜를 `used_up_at`이 아니라 `item.updated_at`으로 변경 — 마이그레이션 미적용 환경에서도 항상 존재하는 필드라 더 안정적(실사용 중 발견)
+
+## 11. 데스크톱 리디자인 v2 (Claude Design v2 목업 기반, 후속 라운드)
+
+- [x] 11.1 `components/Sidebar.tsx` 신설(데스크톱 좌측 고정/모바일 상단 가로 바 반응형, 있템·위시·쓴템 네비), `components/Header.tsx` 삭제, `app/layout.tsx`를 사이드바+콘텐츠 flex 레이아웃으로 재구성
+- [x] 11.2 `components/ProfileMenu.tsx`를 사이드바 하단 프로필 카드 형태로 재스타일(로그아웃 로직 불변)
+- [x] 11.3 있템/위시/쓴템 목록을 세로 리스트에서 카드 그리드로 전환, 카드 내부 레이아웃 재배치(D-day 색상 배지 로직은 유지)
+- [x] 11.4 위시 카드의 "구매" 버튼을 "샀어요 · 있템으로"로 개칭 + 카드 하단 전체너비 버튼으로 이동(기존 애니메이션/서버 액션 로직 재사용)
+- [x] 11.5 `list_owned_categories`/`list_wishlist_categories`를 함께 조회해 위시 카테고리 칩에 합집합으로 노출(위시 전용, 있템은 비대칭 유지)
+- [x] 11.6 로그인/회원가입을 `AuthHeroPanel`+`AuthScreen`+`AuthForm`(mode를 prop으로 전환) 2단 카드로 재구성
+- [x] 11.7 폼 필드 나란히 배치(수량+구매일, 사용기한+메모), 저장+삭제 버튼을 `secondaryAction` prop으로 같은 줄에 배치(별도 flex 컬럼 분할 방식은 빈 공간이 어색해 보여 폐기)
+- [x] 11.8 `--input-bg` 토큰 신설 + 있템/위시 추가·수정 화면에 흰 카드 래퍼 추가, 카테고리 칩·수량 스테퍼 등 폼 컨트롤 배경 대비 개선
+- [x] 11.9 `openspec validate add-inventory-wishlist --strict` 통과 확인, `PRD.md`/`CLAUDE.md`/`README.md`에 신규 기능·컨벤션 반영
+- [x] 11.10 `npx tsc --noEmit` + `npx eslint .` + `npm test` 전체 통과 확인, 실제 로그인 브라우저로 사이드바/카드 그리드/폼 카드/로그인 히어로 패널/반응형 접힘 검증

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import SearchBar from '@/components/SearchBar'
 import CategoryFilter from '@/components/CategoryFilter'
 import OwnedItemList from '@/components/OwnedItemList'
+import { PlusIcon } from '@/components/icons'
 import type { OwnedItem, OwnedItemStatus } from '@/types/owned-item'
 
 interface OwnedItemsExplorerProps {
@@ -35,21 +36,28 @@ export default function OwnedItemsExplorer({ items, onStatusChange }: OwnedItems
     })
   }, [items, search, category])
 
+  const totalCount = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items])
+
   return (
-    <div className="flex flex-col gap-4 animate-fade-in">
-      <div className="flex items-center justify-between">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 animate-fade-in">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-medium tracking-wide text-muted">MY SHELF</p>
-          <h1 className="text-xl font-semibold tracking-tight">있템</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight">있템</h1>
+          <p className="mt-1 text-sm text-muted">모두 {totalCount}개 보관 중</p>
         </div>
-        <Link
-          href="/items/new"
-          className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover"
-        >
-          + 추가
-        </Link>
+        <div className="flex flex-1 items-center justify-end gap-2.5 sm:flex-none">
+          <div className="min-w-0 flex-1 sm:w-56 sm:flex-none">
+            <SearchBar value={search} onChange={setSearch} placeholder="있템 검색" />
+          </div>
+          <Link
+            href="/items/new"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-accent px-4 py-2.5 text-sm font-bold text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover"
+          >
+            <PlusIcon className="h-4 w-4" />
+            추가
+          </Link>
+        </div>
       </div>
-      <SearchBar value={search} onChange={setSearch} placeholder="이름·카테고리로 검색" />
       <CategoryFilter categories={categories} value={category} onChange={setCategory} />
       <label className="flex items-center gap-1.5 self-start text-sm text-muted">
         <input

@@ -26,7 +26,7 @@ export default function WishlistPreviewPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
       <div className="rounded-2xl border border-dashed border-accent/40 bg-accent-soft px-3.5 py-2.5 text-sm text-accent">
         예시 데이터 미리보기예요. 구매·삭제는 화면에서만 반영되고 저장되지 않아요.{' '}
         <Link href="/preview" className="underline underline-offset-2">
@@ -34,8 +34,8 @@ export default function WishlistPreviewPage() {
         </Link>
       </div>
       <div>
-        <p className="text-xs font-medium tracking-wide text-muted">WISH LIST</p>
-        <h1 className="text-xl font-semibold tracking-tight">위시</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight">위시</h1>
+        <p className="mt-1 text-sm text-muted">사기 전에 한 번 더 생각할 것들</p>
       </div>
       <WishlistItemList items={items} markPurchased={removeItem} deleteItem={removeItem} />
     </div>

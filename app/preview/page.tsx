@@ -58,7 +58,7 @@ export default function OwnedItemsPreviewPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
       <div className="rounded-2xl border border-dashed border-accent/40 bg-accent-soft px-3.5 py-2.5 text-sm text-accent">
         예시 데이터 미리보기예요. 여기서 바꾼 내용은 저장되지 않아요.{' '}
         <Link href="/preview/wishlist" className="underline underline-offset-2">
