@@ -1,0 +1,13 @@
+# Python 가상환경 (requirements.txt로 재현)
+.venv/
+__pycache__/
+*.pyc
+
+# YOLO 사전학습 가중치 (최초 실행 시 자동 다운로드됨)
+yolov8n.pt
+
+# 실험 산출물 (스크립트 재실행하면 다시 생성됨 — 대표 결과는 README/EXPERIMENT_RESULTS.md에 직접 남김)
+experiments/outputs/*
+!experiments/outputs/.gitkeep
+
+.DS_Store
