@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // poc/는 별도 Python 프로젝트(가상환경 포함) — 이 앱의 lint 대상이 아니다.
+    "poc/**",
   ]),
 ]);
 

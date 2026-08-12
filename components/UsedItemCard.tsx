@@ -3,6 +3,7 @@
 import type { OwnedItem } from '@/types/owned-item'
 import { CalendarIcon, UndoIcon } from '@/components/icons'
 import FormSubmitButton from '@/components/FormSubmitButton'
+import HintBadge from '@/components/HintBadge'
 
 interface UsedItemCardProps {
   item: OwnedItem
@@ -24,15 +25,18 @@ export default function UsedItemCard({ item, onRevert }: UsedItemCardProps) {
           </span>
         </p>
       </div>
-      <form action={onRevert}>
-        <FormSubmitButton
-          ariaLabel="있템으로 되돌리기"
-          title="있템으로 되돌리기"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-accent-soft hover:text-accent"
-        >
-          <UndoIcon className="h-4.5 w-4.5" />
-        </FormSubmitButton>
-      </form>
+      <div className="flex shrink-0 items-center gap-1">
+        <HintBadge id="used-item-revert" message="다시 쓸 물건이면 눌러서 있템으로 되돌리세요." />
+        <form action={onRevert}>
+          <FormSubmitButton
+            ariaLabel="있템으로 되돌리기"
+            title="있템으로 되돌리기"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-accent-soft hover:text-accent"
+          >
+            <UndoIcon className="h-4.5 w-4.5" />
+          </FormSubmitButton>
+        </form>
+      </div>
     </li>
   )
 }

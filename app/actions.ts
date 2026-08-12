@@ -16,6 +16,32 @@ export async function signOut() {
   await supabase.auth.signOut()
 }
 
+// 첫 진입 온보딩 투어를 봤다는 표시. localStorage 대신 user_metadata에 저장하는 이유는
+// lib/client-session.ts의 clearClientSessionState()가 로그아웃 시 이메일 저장값 하나만
+// 남기고 localStorage를 전부 지우기 때문 — 여기 저장하면 로그아웃 후 재로그인할 때마다
+// 투어가 다시 뜨는 버그가 생긴다. user_metadata는 계정에 귀속되므로 그 문제가 없다.
+export async function markOnboardingSeen() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return
+
+  await supabase.auth.updateUser({ data: { has_seen_onboarding: true } })
+}
+
+// "모든 힌트 초기화"용 — 온보딩 투어를 다시 자동으로 뜨게 되돌린다. 배지 힌트 자체의
+// seenTooltips는 localStorage에 있어 클라이언트에서 따로 지운다(lib/tooltip-hints.ts).
+export async function resetOnboardingSeen() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return
+
+  await supabase.auth.updateUser({ data: { has_seen_onboarding: false } })
+}
+
 export async function setOwnedItemStatus(itemId: string, status: OwnedItemStatus) {
   const supabase = await createClient()
   const {
