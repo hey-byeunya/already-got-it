@@ -125,6 +125,16 @@ export function UndoIcon({ className }: IconProps) {
   )
 }
 
+export function HelpIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="10" cy="10" r="7.5" />
+      <path d="M7.8 7.8a2.2 2.2 0 1 1 3.3 1.9c-.7.4-1.1.9-1.1 1.8v.3" />
+      <circle cx="10" cy="14" r="0.15" fill="currentColor" />
+    </svg>
+  )
+}
+
 export function LinkIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className={className}>

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import type { WishlistItem } from '@/types/wishlist-item'
 import { CalendarIcon, CheckIcon, LinkIcon, TrashIcon } from '@/components/icons'
 import FormSubmitButton from '@/components/FormSubmitButton'
+import HintBadge from '@/components/HintBadge'
 
 interface WishlistItemCardProps {
   item: WishlistItem
@@ -51,16 +52,20 @@ export default function WishlistItemCard({
                 담은 날 {item.created_at.slice(0, 10)}
               </span>
               {item.link && (
-                <a
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                // <Link>가 이미 <a>를 렌더링하므로, 그 안에 또 <a>를 중첩하면 유효하지 않은
+                // HTML이 되어 하이드레이션이 깨진다(실사용 중 발견) — <button>+window.open으로 대체.
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    window.open(item.link!, '_blank', 'noopener,noreferrer')
+                  }}
                   title="상품 링크 열기"
-                  onClick={(e) => e.stopPropagation()}
                   className="text-accent hover:text-accent-hover"
                 >
                   <LinkIcon className="h-3.5 w-3.5" />
-                </a>
+                </button>
               )}
             </div>
           </Link>
@@ -74,12 +79,15 @@ export default function WishlistItemCard({
             </FormSubmitButton>
           </form>
         </div>
-        <form action={handlePurchaseSubmit}>
-          <FormSubmitButton className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-accent py-2.5 text-sm font-bold text-accent-hover transition-colors hover:bg-accent-soft">
-            <CheckIcon className="h-4 w-4" />
-            샀어요 · 있템으로
-          </FormSubmitButton>
-        </form>
+        <div className="flex items-center gap-2">
+          <form action={handlePurchaseSubmit} className="min-w-0 flex-1">
+            <FormSubmitButton className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-accent py-2.5 text-sm font-bold text-accent-hover transition-colors hover:bg-accent-soft">
+              <CheckIcon className="h-4 w-4" />
+              샀어요 · 있템으로
+            </FormSubmitButton>
+          </form>
+          <HintBadge id="wishlist-purchase" message="담아둔 물건을 실제로 사면 눌러서 있템으로 옮기세요." />
+        </div>
       </div>
     </li>
   )

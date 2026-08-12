@@ -6,6 +6,7 @@ import { daysUntil, formatDday } from '@/lib/inventory'
 import { setOwnedItemStatus } from '@/app/actions'
 import { AlertIcon, HourglassIcon } from '@/components/icons'
 import { StatusStepper } from '@/components/StatusStepper'
+import HintBadge from '@/components/HintBadge'
 
 interface OwnedItemCardProps {
   item: OwnedItem
@@ -26,33 +27,39 @@ export default function OwnedItemCard({ item, onStatusChange = setOwnedItemStatu
     >
       <Link href={`/items/${item.id}`} className="flex min-w-0 items-center gap-2">
         <p className="min-w-0 flex-1 truncate font-semibold">{item.name}</p>
-        <span className="shrink-0 whitespace-nowrap rounded-lg bg-accent-soft px-2 py-1 text-xs font-bold text-accent">
-          {item.quantity}개
+        <span className="inline-flex shrink-0 items-center gap-1">
+          <span className="whitespace-nowrap rounded-lg bg-accent-soft px-2 py-1 text-xs font-bold text-accent">
+            {item.quantity}개
+          </span>
+          <HintBadge id="owned-item-quantity" message="눌러서 들어가면 수량을 바로 조절할 수 있어요." />
         </span>
       </Link>
       <div className="mt-2 flex items-center justify-between gap-2">
-        {days !== null ? (
-          <span
-            className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${
-              overdue
-                ? 'bg-dday-overdue-bg text-dday-overdue'
-                : urgent
-                  ? 'bg-dday-urgent-bg text-dday-urgent'
-                  : 'bg-dday-normal-bg text-dday-normal'
-            }`}
-          >
-            {overdue ? (
-              <AlertIcon className="h-3.5 w-3.5 shrink-0" />
-            ) : urgent ? (
-              <HourglassIcon className="h-3.5 w-3.5 shrink-0" />
-            ) : null}
-            {formatDday(days)}
-          </span>
-        ) : (
-          <span className="shrink-0 whitespace-nowrap rounded-full border border-dashed border-surface-border px-2.5 py-1 text-xs text-muted">
-            기한 없음
-          </span>
-        )}
+        <span className="inline-flex min-w-0 shrink-0 items-center gap-1">
+          {days !== null ? (
+            <span
+              className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${
+                overdue
+                  ? 'bg-dday-overdue-bg text-dday-overdue'
+                  : urgent
+                    ? 'bg-dday-urgent-bg text-dday-urgent'
+                    : 'bg-dday-normal-bg text-dday-normal'
+              }`}
+            >
+              {overdue ? (
+                <AlertIcon className="h-3.5 w-3.5 shrink-0" />
+              ) : urgent ? (
+                <HourglassIcon className="h-3.5 w-3.5 shrink-0" />
+              ) : null}
+              {formatDday(days)}
+            </span>
+          ) : (
+            <span className="shrink-0 whitespace-nowrap rounded-full border border-dashed border-surface-border px-2.5 py-1 text-xs text-muted">
+              기한 없음
+            </span>
+          )}
+          <HintBadge id="owned-item-dday" message="사용기한이 임박하면 카드 색으로 알려드려요." />
+        </span>
         <span className="min-w-0 truncate rounded-lg bg-background px-2 py-1 text-xs font-semibold text-muted">
           {item.category ?? '미분류'}
         </span>

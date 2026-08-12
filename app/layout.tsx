@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import BfcacheGuard from "@/components/BfcacheGuard";
+import OnboardingProvider from "@/components/OnboardingProvider";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default async function RootLayout({
   const sidebarUser = user
     ? { nickname: (user.user_metadata?.nickname as string | undefined) ?? null, email: user.email ?? "" }
     : null;
+  const showOnboarding = !!user && !user.user_metadata?.has_seen_onboarding;
 
   return (
     <html lang="ko" className="h-full antialiased">
@@ -33,10 +35,12 @@ export default async function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <BfcacheGuard />
-        <div className="flex min-h-full flex-1 flex-col md:flex-row">
-          <Sidebar user={sidebarUser} />
-          <main className="flex w-full flex-1 flex-col px-4 py-6 md:px-8 md:py-8">{children}</main>
-        </div>
+        <OnboardingProvider initialShouldShow={showOnboarding}>
+          <div className="flex min-h-full flex-1 flex-col md:flex-row">
+            <Sidebar user={sidebarUser} />
+            <main className="flex w-full flex-1 flex-col px-4 py-6 md:px-8 md:py-8">{children}</main>
+          </div>
+        </OnboardingProvider>
       </body>
     </html>
   );
