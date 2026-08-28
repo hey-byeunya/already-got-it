@@ -63,5 +63,8 @@ Vercel(무료 Hobby 플랜)에 배포되어 있습니다. Server Action과 서�
 ## 문서
 
 - [PRD.md](./PRD.md) — 기획 배경, 기능 정의, 완성 기준
-- [CLAUDE.md](./CLAUDE.md) — 개발 시 지켜야 할 규칙 (보안/RLS, 원자적 전환, 검색·정렬, UI/UX 컨벤션, 비밀값 관리)
+- [CLAUDE.md](./CLAUDE.md) — 개발 시 **항상** 지켜야 할 규칙 (보안/RLS 3중 방어, 비밀값 관리, 스펙 갱신 순서) + 아래 주제별 문서 인덱스
+- [docs/rules/](./docs/rules) — 주제별 상세 규칙: 폼·필드 값([fields.md](./docs/rules/fields.md)), 인증 플로우([auth.md](./docs/rules/auth.md)), 세션 격리([session.md](./docs/rules/session.md)), 목록 조회·위시 전환([data-access.md](./docs/rules/data-access.md))
+- [components/CLAUDE.md](./components/CLAUDE.md) — UI 컨벤션·화면 레이아웃
+- [docs/manual-qa.md](./docs/manual-qa.md) — 수동 테스트 체크리스트
 - [openspec/changes/add-inventory-wishlist](./openspec/changes/add-inventory-wishlist) — 스펙 기반 변경 제안 (proposal/design/tasks/specs)
