@@ -11,6 +11,8 @@
 - 폼 스타일: 공통 `inputClass`(`rounded-xl border-surface-border bg-input-bg ... focus:border-accent`) 패턴을 새 폼에도 동일하게 적용한다. **입력창 배경은 `bg-surface`가 아니라 `bg-input-bg`를 쓴다** — 있템/위시 추가·수정 화면이 흰 카드(`bg-surface`) 안에 들어있어서, 입력창까지 `bg-surface`를 쓰면 카드와 색이 같아져 경계가 안 보인다. `--input-bg`(`app/globals.css`, 기본값 `#fafbfb`)는 카드보다 살짝 어두운 톤으로 이 대비를 위해 존재하는 전용 토큰이다. 카테고리 칩·수량 스테퍼 버튼처럼 카드 위에 놓이는 다른 폼 컨트롤도 동일하게 `bg-input-bg`를 쓴다.
 - 폼 하단에 저장 외에 삭제처럼 별도 서버 액션(별도 `<form>`)이 필요한 보조 버튼을 붙일 때는 `OwnedItemForm`/`WishlistItemForm`의 `secondaryAction` prop(ReactNode)을 쓴다 — 저장 버튼과 같은 줄에 나란히 렌더링된다. 부모 페이지에서 폼 전체를 감싸는 별도 flex 컬럼으로 나누지 않는다 — 그렇게 하면 짧은 삭제 버튼 쪽에 세로로 긴 빈 공간이 생겨 어색해 보인다(실제로 한 번 겪은 문제).
 - 이메일 저장(로그인 화면): `localStorage` 키 `already-got-it:remembered-email`에 이메일만 저장한다. **비밀번호는 절대 저장하지 않는다.**
+- 첫 로그인 온보딩: `components/OnboardingProvider.tsx`가 있템 목록(`/`) 첫 진입 600ms 후 4단계 투어(`components/OnboardingTour.tsx`)를 자동으로 연다. 완료/건너뛰기 여부는 `has_seen_onboarding`(Supabase `user_metadata`, `markOnboardingSeen` 서버 액션으로 기록, 멱등)로 저장하며 별도 테이블을 두지 않는다 — 닉네임과 같은 패턴. `useOnboardingReplay()`로 언제든 다시 열 수 있다(`ProfileMenu`의 "다시 보기" 등).
+- 힌트 배지: `components/HintBadge.tsx`가 수량/D-day/위시 구매/쓴템 되돌리기 등 핵심 컨트롤에 상시 노출되는 "?" 배지다. 투어가 열려 있거나 이미 완료된 뒤에는 pulse 애니메이션을 생략한다(`useOnboardingStatus()`로 판단). 봤는지 여부는 `lib/tooltip-hints.ts`가 `localStorage` 키 `already-got-it:seen-tooltips`에 배지 id 배열로 저장한다 — `lib/client-session.ts`의 `clearClientSessionState()`가 "예외 하나만 남기고 전부 삭제" 방식이라 이 키는 로그아웃 시 별도 등록 없이 자동으로 지워진다.
 
 ## 화면 레이아웃 (사이드바 셸)
 
