@@ -102,3 +102,11 @@
 - [x] 12.6 회원가입 직후 이메일을 URL 쿼리스트링(`/login?signedUp=1&email=...`) 대신 60초 만료 쿠키(`signup_email`)로 전달하도록 변경 — `app/login/actions.ts`가 쿠키를 심고 `app/login/page.tsx`가 서버 사이드에서만 읽음
 - [x] 12.7 `lib/auth-routes.ts` 신설(`isAuthExemptPath`), `components/Sidebar.tsx`와 `lib/supabase/proxy.ts`가 각자 다른 규칙(완전일치 vs 접두사 일치)으로 판정하던 인증 예외 경로를 단일 함수로 통합
 - [x] 12.8 `npx tsc --noEmit` + `npx eslint .` + `npm test`(신규 `deriveUsedUpAtForUpdate` 테스트 케이스 포함) 전체 통과 확인, `openspec validate add-inventory-wishlist --strict` 통과 확인, `PRD.md`/`CLAUDE.md`에 반영
+
+## 13. 에러 로그 관리
+
+- [x] 13.1 `error_logs` 테이블 마이그레이션 (user_id nullable FK, message, route, digest nullable, created_at + RLS 본인 정책 + 인덱스)
+- [x] 13.2 `types/error-log.ts`, `lib/log-error.ts`(클라이언트), `lib/log-error-server.ts`(서버) 헬퍼 작성 — 실패 시 조용히 무시
+- [x] 13.3 `app/error.tsx` 신설 (에러 화면 + 다시 시도/홈으로 + 1회 기록)
+- [x] 13.4 Server Action `throw` 지점에 서버 로깅 연동 (에러 문구 불변, `redirect` 경로는 제외)
+- [ ] 13.5 수동 QA (강제 에러→행 확인→타계정 격리→로깅 실패 시 UI 정상) — 자동 검증(`openspec validate --strict` + `tsc` + `eslint` + `npm test`)은 통과

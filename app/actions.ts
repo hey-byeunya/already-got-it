@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { logServerError } from '@/lib/log-error-server'
 import type { OwnedItemStatus } from '@/types/owned-item'
 import { deriveUsedUpAt, revertUsedItemFields } from '@/lib/owned-item-status'
 import { todayDateString } from '@/lib/inventory'
@@ -62,8 +63,14 @@ export async function setOwnedItemStatus(itemId: string, status: OwnedItemStatus
     .eq('user_id', user.id)
     .select()
 
-  if (error) throw new Error(error.message)
-  if (!data || data.length === 0) throw new Error('보유템을 찾을 수 없어요')
+  if (error) {
+    await logServerError({ message: error.message, route: 'action:setOwnedItemStatus' })
+    throw new Error(error.message)
+  }
+  if (!data || data.length === 0) {
+    await logServerError({ message: '보유템을 찾을 수 없어요', route: 'action:setOwnedItemStatus' })
+    throw new Error('보유템을 찾을 수 없어요')
+  }
 
   revalidatePath('/')
   revalidatePath('/used')
@@ -87,8 +94,14 @@ export async function revertUsedItem(itemId: string) {
     .eq('user_id', user.id)
     .select()
 
-  if (error) throw new Error(error.message)
-  if (!data || data.length === 0) throw new Error('보유템을 찾을 수 없어요')
+  if (error) {
+    await logServerError({ message: error.message, route: 'action:revertUsedItem' })
+    throw new Error(error.message)
+  }
+  if (!data || data.length === 0) {
+    await logServerError({ message: '보유템을 찾을 수 없어요', route: 'action:revertUsedItem' })
+    throw new Error('보유템을 찾을 수 없어요')
+  }
 
   // 쓴템 목록에서는 즉시 사라지고, 있템 목록에는 "사용중" 상태로 나타나야 하므로 둘 다 갱신한다.
   revalidatePath('/')

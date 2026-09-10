@@ -40,11 +40,17 @@
 - 회원가입 직후 이메일이 URL 쿼리스트링에 노출되던 문제를 60초 만료 쿠키 기반 전달로 수정
 - 사이드바와 세션 미들웨어가 "인증 예외 경로"를 서로 다른 규칙으로 판정하던 문제를 `lib/auth-routes.ts`의 단일 판정 함수로 통합
 
+### 에러 로그 관리 확장분
+- `error_logs` 테이블 신설(id, user_id nullable, message, route, digest nullable, created_at): 처리되지 않은 라우트 에러·Server Action 실패를 기록
+- 저장 항목은 메시지만 — stack trace·쿼리스트링 저장 안 함 (민감정보 보호). 조회는 앱 내 화면 없이 Supabase 대시보드에서만
+- `app/error.tsx` 신설: 에러 화면 표시 + "다시 시도"/"홈으로" 제공, 클라이언트 에러 1회 기록
+
 ## Capabilities
 
 ### New Capabilities
 - `inventory`: 로그인한 사용자가 자신의 보유템을 등록·조회·수정·삭제하고, 사용기한 임박순 정렬/D-day 표시/이름·카테고리 검색을 제공하는 capability
 - `wishlist`: 로그인한 사용자가 자신의 위시리스트 항목을 등록·조회·삭제하고, '구매완료' 처리를 통해 보유템으로 원자적으로 전환하는 capability
+- `error-logging`: 처리되지 않은 라우트 에러와 Server Action 실패를 `error_logs` 테이블에 기록하는 capability (메시지+라우트명만, stack·쿼리 제외, 대시보드 조회)
 
 ### Modified Capabilities
 (해당 없음 - 그린필드 기능이며 기존 spec이 없음)

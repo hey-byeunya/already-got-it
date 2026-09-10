@@ -50,6 +50,10 @@
 
 `name ILIKE '%검색어%' OR category ILIKE '%검색어%'`를 기본으로 하고, 데이터량이 늘어날 경우 `pg_trgm` GIN 인덱스로 성능을 보강한다.
 
+### 결정 5: 에러 로그는 Supabase 테이블 + error.tsx로 최소 기록
+
+`error_logs(user_id nullable, message, route, digest nullable, created_at)` 테이블에 RLS 본인 insert/select 정책을 적용한다. `app/error.tsx`(클라이언트 경계)에서 1회 기록하고, Server Action의 `throw` 지점에서는 throw 직전에 서버 헬퍼로 기록한다. stack·쿼리스트링은 저장하지 않고, `!user` → `redirect('/login')` 같은 정상 세션 만료 경로는 기록하지 않는다. 조회용 앱 화면은 만들지 않고 Supabase 대시보드로 조회한다. service role key는 사용하지 않는다.
+
 ## Risks / Trade-offs
 
 - **[위험] RLS 정책 설정 실수로 격리가 깨질 수 있음** → 마이그레이션에 RLS 정책을 함께 버전 관리하고, 두 capability 모두 "타인의 데이터 접근 차단" 시나리오를 통합 테스트로 고정해 회귀를 방지한다.

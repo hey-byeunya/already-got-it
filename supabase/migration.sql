@@ -185,3 +185,27 @@ $$;
 
 grant execute on function public.list_owned_categories() to authenticated;
 grant execute on function public.list_wishlist_categories() to authenticated;
+
+-- 7. error_logs: 처리되지 않은 라우트 에러·Server Action 실패 기록 --------------
+-- 저장 항목은 메시지에 한정 (stack trace·쿼리스트링 저장 안 함). 조회는 앱 내 화면
+-- 없이 Supabase 대시보드에서만. 비로그인 에러는 DB에 기록하지 않고 화면만 표시.
+create table if not exists public.error_logs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users (id) on delete cascade,
+  message text not null,
+  route text not null,
+  digest text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists error_logs_user_created_idx on public.error_logs (user_id, created_at desc);
+
+alter table public.error_logs enable row level security;
+
+drop policy if exists "error_logs_select_own" on public.error_logs;
+create policy "error_logs_select_own" on public.error_logs
+  for select using (auth.uid() = user_id);
+
+drop policy if exists "error_logs_insert_own" on public.error_logs;
+create policy "error_logs_insert_own" on public.error_logs
+  for insert with check (auth.uid() = user_id);
